@@ -1,0 +1,64 @@
+/*
+    CSS 权重
+      !important > 行内 > id > class > 元素
+    
+    权重可叠加
+      当存在嵌套时，当前样式权重为每层权重的总和
+
+*/
+/* 自定义变量 */
+/* 颜色相关 */
+$background-color: rgb(33, 33, 33);
+$default-color-M: #ffffff;
+$default-color-S: rgb(143, 143, 143);
+$default-light-color: rgb(252, 204, 13);
+/* 字体相关 */
+$default-font-family: "PingFang SC", "STHeitiSC-Light", "Helvetica-Light", arial, sans-serif, "Droid Sans Fallback";
+$font-size-XXS: 10px;
+$font-size-XS: 12px;
+$font-size-S: 14px;
+$font-size-M: 16px;
+$font-size-L: 18px;
+$font-size-XL: 20px;
+$font-size-XXL: 22px;
+$font-size-XXXL: 24px;
+
+/* 自定义函数 */
+// 水平垂直居中
+@mixin centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 不换行
+@mixin no-wrap {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+// 背景图片
+@mixin bg-image($url) {
+  background-image: url($url + "@2x.png");
+  @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){
+    background-image: url($url + "@3x.png");
+  }
+}
+
+// 箭头（大小，宽度，方向）
+@mixin arrow($size, $weight, $dir) {
+  width: $size + px;
+  height: $size + px;
+  border-top: $weight + px solid $default-light-color;
+  border-right: $weight + px solid $default-light-color;
+  @if $dir == top {
+    transform: rotate(-45deg);
+  } @else if $dir == right {
+    transform: rotate(45deg);
+  } @else if $dir == bottom {
+    transform: rotate(135deg);
+  } @else if $dir == left {
+    transform: rotate(-135deg);
+  }
+}

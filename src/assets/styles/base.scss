@@ -1,0 +1,18 @@
+body, html {
+    color: rgb(143, 143, 143);
+    background: rgb(33, 33, 33);
+    overflow: hidden;
+    line-height: 1.5;
+    font-family: sans-serif;
+    font-weight: 300;
+    font-stretch: normal;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
