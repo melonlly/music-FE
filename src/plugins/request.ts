@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from '@/types/axios'
 import { AxiosResponse, CancelTokenStatic, Canceler } from 'axios';
+import Vue from 'vue'
 
 /* 防止重复提交，利用axios的cancelToken
    如需允许多个提交同时发出。则需要在请求配置config中增加 neverCancel 属性，并设置为true
@@ -70,3 +71,10 @@ service.interceptors.response.use(
         return Promise.reject(error)
     },
 )
+
+export default {
+    install(V: typeof Vue) {
+        V.prototype.$axios = service
+        V.prototype.$OK = 0
+    },
+}
