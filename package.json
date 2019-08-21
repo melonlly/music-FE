@@ -24,6 +24,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@types/better-scroll": "^1.12.1",
     "@types/fastclick": "^1.0.28",
     "@types/jest": "^23.1.4",
     "@vue/cli-plugin-babel": "^3.10.0",
