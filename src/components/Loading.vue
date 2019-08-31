@@ -1,6 +1,6 @@
 <template>
     <div class="loading">
-        <img width="24" height="24" src="@/assets/images/loading.gif">
+        <img width="24" height="24" src="~assets/images/loading.gif">
         <p class="desc">{{ title }}</p>
     </div>
 </template>
@@ -18,7 +18,7 @@ export default class Loading extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/mixin.scss';
+@import '~assets/styles/mixin.scss';
 .loading {
     position: absolute;
     z-index: 300;

@@ -47,7 +47,7 @@ import Listener from "@/components/Listener.vue";
     }
 })
 export default class Recommend extends Vue {
-    name: string = "Recommend";
+    name: string = 'Recommend';
     recommends: Array<any> = []; // 推荐列表
     hots: Array<any> = []; // 热门列表
     imgIsDown: boolean = false; // 是否已经刷新滚动（图片加载完成后刷新）
@@ -57,12 +57,12 @@ export default class Recommend extends Vue {
     }
     // 获取轮播图列表
     private getRecommend() {
-        this.$axios.get("/recommend/nav", {}).then(res => {
+        this.$axios.get('/recommend/nav', {}).then(res => {
             if (res.status === this.$OK) this.recommends = res.data;
         });
     }
     private getHots() {
-        this.$axios.get("/hot/song/", {}).then(res => {
+        this.$axios.get('/hot/song/', {}).then(res => {
             if (res.status === this.$OK) this.hots = res.data;
         });
     }
@@ -76,7 +76,7 @@ export default class Recommend extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/mixin.scss";
+@import "~assets/styles/mixin.scss";
 .recommend {
     overflow: hidden;
     .recommend-slider {

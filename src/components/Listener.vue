@@ -19,7 +19,7 @@ export default class Listener extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/mixin.scss';
+@import '~assets/styles/mixin.scss';
 .listener {
     font-size: $font-size-XS;
     color: $default-color-M;
@@ -32,7 +32,7 @@ export default class Listener extends Vue {
         background-position: 0 -50px;
         margin-right: 3px;
         margin-top: 4px;
-        background-image: url('@/assets/images/play_sprite.png');
+        background-image: url('~assets/images/play_sprite.png');
         background-repeat: no-repeat;
         background-size: 24px 60px;
     }

@@ -1,26 +1,26 @@
 import {
-	AxiosRequestConfig as MAxiosRequestConfig,
-	AxiosInstance as MAxiosInstance,
+	AxiosRequestConfig,
+	AxiosInstance,
 	AxiosInterceptorManager,
 	AxiosResponse,
-	AxiosStatic as MAxiosStatic,
+	AxiosStatic,
 } from 'axios'
 
-export declare interface AxiosRequestConfig extends MAxiosRequestConfig {
-	neverCancel?: boolean
-}
-
-export declare interface AxiosInstance extends MAxiosInstance {
-	interceptors: {
-		request: AxiosInterceptorManager<AxiosRequestConfig>;
-		response: AxiosInterceptorManager<AxiosResponse>;
+declare module 'axios' {
+	export interface MAxiosRequestConfig extends AxiosRequestConfig {
+		neverCancel?: boolean
 	}
+	
+	// export interface MAxiosInstance extends AxiosInstance {
+	// 	interceptors: {
+	// 		request: AxiosInterceptorManager<MAxiosRequestConfig>;
+	// 		response: AxiosInterceptorManager<AxiosResponse>;
+	// 	}
+	// }
+	
+	// export interface MAxiosStatic extends AxiosStatic {
+	// 	create(config?: MAxiosRequestConfig): MAxiosInstance;
+	// }
+	
+	// export const Axios: AxiosStatic
 }
-
-export declare interface AxiosStatic extends MAxiosStatic {
-	create(config?: MAxiosRequestConfig): AxiosInstance;
-}
-
-declare const Axios: AxiosStatic;
-
-export default Axios

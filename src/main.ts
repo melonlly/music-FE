@@ -9,14 +9,18 @@ import './assets/styles/index.scss';
 import fastclick from 'fastclick'
 import requestPlugin from './plugins/request'
 import VueLazyLoad from 'vue-lazyload'
+import config from './config'
 
 /* eslint-disable no-unused-vars */
 const vConsole = new Vconsole();
 
-fastclick(document.body)
+fastclick.attach(document.body)
 
 /* plugins */
-Vue.use(requestPlugin)
+Vue.use(requestPlugin, {
+    // baseUrl
+    url: `${config.protocol}://${config.host}:${config.port}`
+})
 Vue.use(VueLazyLoad, {
     loading: require('./assets/images/default.png'),
 })

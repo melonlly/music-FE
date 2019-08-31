@@ -1,5 +1,4 @@
-import axios, { AxiosRequestConfig } from '@/types/axios'
-import { AxiosResponse, CancelTokenStatic, Canceler } from 'axios';
+import axios, { AxiosResponse, CancelTokenStatic, Canceler, MAxiosRequestConfig } from 'axios';
 import Vue from 'vue'
 
 /* 防止重复提交，利用axios的cancelToken
@@ -26,55 +25,59 @@ const removePending = (config: any, cancel?: Canceler) => {
 }
 
 // 创建axios实例
-const service = axios.create({
-    baseURL: '/api',
-    // 即将被发送的自定义请求头
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/json',
-    },
-    timeout: 60000,
-     // 服务器响应的数据类型，可以是 'arraybuffer', 'blob', 'document', 'json', 'text', 'stream'
-    responseType: 'json',
-})
+const getService = (options: any) => {
+    const service = axios.create({
+        baseURL: `${options.url}/api`,
+        // 即将被发送的自定义请求头
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+        },
+        timeout: 60000,
+         // 服务器响应的数据类型，可以是 'arraybuffer', 'blob', 'document', 'json', 'text', 'stream'
+        responseType: 'json',
+    })
 
-// request拦截器
-service.interceptors.request.use(
-    (reqConfig: AxiosRequestConfig) => {
-        // neverCancel配置项，允许多个请求
-        if (!reqConfig.neverCancel) {
-            // 生成cancelToken
-            reqConfig.cancelToken = new CancelToken((cancel: Canceler) => {
-                removePending(reqConfig, cancel)
-            })
-        }
+    // request拦截器
+    service.interceptors.request.use(
+        (reqConfig: MAxiosRequestConfig) => {
+            // neverCancel配置项，允许多个请求
+            if (!reqConfig.neverCancel) {
+                // 生成cancelToken
+                reqConfig.cancelToken = new CancelToken((cancel: Canceler) => {
+                    removePending(reqConfig, cancel)
+                })
+            }
 
-        // 统一修改请求头 TODO
+            // 统一修改请求头 TODO
 
-        return reqConfig
-    },
-    (error: any) => {
-        console.error(error)
-        return Promise.reject(error)
-    },
-)
+            return reqConfig
+        },
+        (error: any) => {
+            console.error(error)
+            return Promise.reject(error)
+        },
+    )
 
-// response拦截器
-service.interceptors.response.use(
-    (response: AxiosResponse) => {
-        removePending(response.config)
-        return response
-    },
-    (error: any) => {
-        console.error(error)
-        pending = []
-        return Promise.reject(error)
-    },
-)
+    // response拦截器
+    service.interceptors.response.use(
+        (response: AxiosResponse) => {
+            removePending(response.config)
+            return response
+        },
+        (error: any) => {
+            console.error(error)
+            pending = []
+            return Promise.reject(error)
+        },
+    )
+
+    return service
+}
 
 export default {
-    install(V: typeof Vue) {
-        V.prototype.$axios = service
+    install(V: typeof Vue, options: any) {
+        V.prototype.$axios = getService(options)
         V.prototype.$OK = 0
     },
 }

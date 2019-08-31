@@ -83,7 +83,7 @@ export default class Scroller extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/mixin.scss";
+@import "~assets/styles/mixin.scss";
 .scroller {
     height: 100%;
     .scroller-content {

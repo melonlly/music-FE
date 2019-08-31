@@ -21,7 +21,7 @@ export default class Header extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/mixin.scss";
+@import "~assets/styles/mixin.scss";
 .header {
     header {
         position: relative;
@@ -36,7 +36,7 @@ export default class Header extends Vue {
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            @include bg-image("@/assets/images/logo");
+            @include bg-image("~assets/images/logo");
         }
         // .login {
         //     position: absolute;

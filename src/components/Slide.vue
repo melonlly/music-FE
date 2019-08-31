@@ -65,7 +65,7 @@ export default class Slide extends Vue {
             return;
         }
         this.slide.enable();
-        let pageIndex = this.slide.getCurrentPage().pageX;
+        const pageIndex = this.slide.getCurrentPage().pageX;
         this.slide.goToPage(pageIndex, 0, 0);
         this.currentPageIndex = pageIndex;
         if (this.autoPlay) {
@@ -124,9 +124,9 @@ export default class Slide extends Vue {
     private setSlideWidth(isResize?: boolean) {
         this.children = (this.$refs.slideGroup as Element).children;
         let width = 0;
-        let slideWidth = (this.$refs.slide as Element).clientWidth;
+        const slideWidth = (this.$refs.slide as Element).clientWidth;
         for (let i = 0; i < this.children.length; i++) {
-            let child = this.children[i] as HTMLElement;
+            const child = this.children[i] as HTMLElement;
             addClass(child, "slide-item");
             child.style.width = slideWidth + "px";
             width += slideWidth;
@@ -167,7 +167,7 @@ export default class Slide extends Vue {
     }
     // 滚动结束事件
     private onScrollEnd() {
-        let pageIndex = this.slide.getCurrentPage().pageX;
+        const pageIndex = this.slide.getCurrentPage().pageX;
         this.currentPageIndex = pageIndex;
         if (this.autoPlay) {
             this.play();
@@ -211,7 +211,7 @@ export default class Slide extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/mixin.scss";
+@import "~assets/styles/mixin.scss";
 .slide {
     min-height: 1px;
     .slide-group {
