@@ -19,14 +19,30 @@ export default class Scroller extends Vue {
 	children: Array<any> = [] // 子元素集合
 	scroller?: BScroll // 滚动条对象
 	@Prop({
-		required: true
+        required: true,
+        default: () => []
 	})
-	private readonly dataList: Array<any> = [] // 数据组
-	@Prop() private readonly probeType: number = 1 // 类型
-	@Prop() private readonly listenScroll: boolean = false // 是否监听滚动
-	@Prop() private readonly click: boolean = false // 是否能点击
-	@Prop() private readonly refreshDelay: number = 20 // 刷新延时（单位：ms）
-    @Prop() private readonly pullUpLoad: boolean = false // 是否上拉刷新
+	private readonly dataList?: Array<any> // 数据组
+    @Prop({
+        default: 1
+    })
+    private readonly probeType?: number // 类型
+    @Prop({
+        default: false
+    })
+    private readonly listenScroll?: boolean // 是否监听滚动
+    @Prop({
+        default: false
+    })
+    private readonly click?: boolean // 是否能点击
+    @Prop({
+        default: 20
+    })
+    private readonly refreshDelay?: number // 刷新延时（单位：ms）
+    @Prop({
+        default: false
+    })
+    private readonly pullUpLoad?: boolean // 是否上拉刷新
     created() {
         this.$nextTick(() => {
             this.initScroll()

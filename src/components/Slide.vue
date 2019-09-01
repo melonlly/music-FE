@@ -24,16 +24,41 @@ import { addClass } from "@/utils/dom";
 })
 export default class Slide extends Vue {
     name: string = "Slide";
-    @Prop() private readonly loop: boolean = true; // 是否循环
-    @Prop() private readonly autoPlay: boolean = true; // 是否自动播放
-    @Prop() private readonly interval: number = 4000; // 播放间隔（单位：ms）
-    @Prop() private readonly showDot: boolean = true; // 是否显示dots
-    @Prop() private readonly click: boolean = true; // 是否可以点击
-    @Prop() private readonly threshold: number = 0.3; // 可以滚动到下一个的阈值（snap参数）
-    @Prop() private readonly speed: number = 400; // 切换速度（单位：ms）
-    @Prop() private readonly curIndex: number = 0; // 当前下标
+    @Prop({
+        default: true
+    })
+    private readonly loop?: boolean // 是否循环
+    @Prop({
+        default: true
+    })
+    private readonly autoPlay?: boolean // 是否自动播放
+    @Prop({
+        default: 4000
+    })
+    private readonly interval?: number // 播放间隔（单位：ms）
+    @Prop({
+        default: true
+    })
+    private readonly showDot?: boolean // 是否显示dots
+    @Prop({
+        default: true
+    })
+    private readonly click?: boolean // 是否可以点击
+    @Prop({
+        default: 0.3
+    })
+    private readonly threshold?: number // 可以滚动到下一个的阈值（snap参数）
+    @Prop({
+        default: 400
+    })
+    private readonly speed?: number // 切换速度（单位：ms）
+    @Prop({
+        default: 0
+    })
+    private readonly curIndex?: number // 当前下标
+    
     dots: Array<any> = []; // dot个数
-    currentPageIndex: number = this.curIndex;
+    currentPageIndex?: number = this.curIndex;
 
     resizeTimer?: number;
     slide!: BScroll;
@@ -116,7 +141,7 @@ export default class Slide extends Vue {
         }
 
         // 初始化到指定目标
-        this.slide.goToPage(this.currentPageIndex, 0, 0);
+        this.slide.goToPage(this.currentPageIndex || 0, 0, 0);
     }
 
     /* 内部私有函数 */
@@ -187,25 +212,25 @@ export default class Slide extends Vue {
     }
 
     /* 监听事件 */
-    @Watch('loop')
+    @Watch("loop")
     onLoop() {
-        this.update()
+        this.update();
     }
-    @Watch('autoPlay')
+    @Watch("autoPlay")
     onAutoPlay() {
-        this.update()
+        this.update();
     }
-    @Watch('speed')
+    @Watch("speed")
     onSpeed() {
-        this.update()
+        this.update();
     }
-    @Watch('threshold')
+    @Watch("threshold")
     onThreshold() {
-        this.update()
+        this.update();
     }
-    @Watch('curIndex')
+    @Watch("curIndex")
     onCurIndex() {
-        this.$emit('pageIndex', this.curIndex)
+        this.$emit("pageIndex", this.curIndex);
     }
 }
 </script>

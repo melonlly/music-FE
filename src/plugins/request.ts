@@ -63,7 +63,7 @@ const getService = (options: any) => {
     service.interceptors.response.use(
         (response: AxiosResponse) => {
             removePending(response.config)
-            return response
+            return response && response.data
         },
         (error: any) => {
             console.error(error)

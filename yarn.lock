@@ -743,11 +743,6 @@
   resolved "https://registry.npm.taobao.org/@types/events/download/@types/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
   integrity sha1-KGLz9Yqaf3w+eNefEw3U1xwlwqc=
 
-"@types/fastclick@^1.0.28":
-  version "1.0.28"
-  resolved "https://registry.yarnpkg.com/@types/fastclick/-/fastclick-1.0.28.tgz#db4b3f6f079235324b264338e229f9cdd98a6c4e"
-  integrity sha1-20s/bweSNTJLJkM44in5zdmKbE4=
-
 "@types/glob@^7.1.1":
   version "7.1.1"
   resolved "https://registry.npm.taobao.org/@types/glob/download/@types/glob-7.1.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fglob%2Fdownload%2F%40types%2Fglob-7.1.1.tgz#aa59a1c6e3fbc421e07ccd31a944c30eba521575"
@@ -3378,6 +3373,11 @@ dotenv@^7.0.0:
   version "7.0.0"
   resolved "https://registry.npm.taobao.org/dotenv/download/dotenv-7.0.0.tgz#a2be3cd52736673206e8a85fb5210eea29628e7c"
   integrity sha1-or481Sc2ZzIG6KhftSEO6ilijnw=
+
+dotenv@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.1.0.tgz#d811e178652bfb8a1e593c6dd704ec7e90d85ea2"
+  integrity sha512-GUE3gqcDCaMltj2++g6bRQ5rBJWtkWTmqmD0fo1RnnMuUqHNCt2oTPeDnS9n6fKYvlhn7AeBkb38lymBtWBQdA==
 
 duplexer@^0.1.1:
   version "0.1.1"
@@ -7512,7 +7512,16 @@ pn@^1.1.0:
   resolved "https://registry.npm.taobao.org/pn/download/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha1-4vTO8OIZ9GPBeas3Rj5OHs3Muvs=
 
-portfinder@^1.0.20, portfinder@^1.0.21:
+portfinder@1.0.21, portfinder@^1.0.20:
+  version "1.0.21"
+  resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.21.tgz#60e1397b95ac170749db70034ece306b9a27e324"
+  integrity sha512-ESabpDCzmBS3ekHbmpAIiESq3udRsCBGiBZLsC+HgBKv2ezb0R4oG+7RnYEVZ/ZCfhel5Tx3UzdNWA0Lox2QCA==
+  dependencies:
+    async "^1.5.2"
+    debug "^2.2.0"
+    mkdirp "0.5.x"
+
+portfinder@^1.0.21:
   version "1.0.22"
   resolved "https://registry.npm.taobao.org/portfinder/download/portfinder-1.0.22.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fportfinder%2Fdownload%2Fportfinder-1.0.22.tgz#abd10a488b5696e98ee25c60731f8ae0b76f8ddd"
   integrity sha1-q9EKSItWlumO4lxgcx+K4Ldvjd0=
@@ -9970,7 +9979,7 @@ webidl-conversions@^4.0.2:
   resolved "https://registry.npm.taobao.org/webidl-conversions/download/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"
   integrity sha1-qFWYCx8LazWbodXZ+zmulB+qY60=
 
-webpack-bundle-analyzer@^3.3.0:
+webpack-bundle-analyzer@^3.3.0, webpack-bundle-analyzer@^3.4.1:
   version "3.4.1"
   resolved "https://registry.npm.taobao.org/webpack-bundle-analyzer/download/webpack-bundle-analyzer-3.4.1.tgz#430544c7ba1631baccf673475ca8300cb74a3c47"
   integrity sha1-QwVEx7oWMbrM9nNHXKgwDLdKPEc=

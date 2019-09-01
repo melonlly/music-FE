@@ -13,10 +13,11 @@
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
-    components: {}
+    name: 'Header',
+    components: {},
 })
 export default class Header extends Vue {
-    name: string = "Header";
+
 }
 </script>
 

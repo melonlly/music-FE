@@ -38,9 +38,18 @@ const getRandomItem = (arr: []) => {
     }
 }
 
+const getSingerPic = (mid: string) => `https://y.gtimg.cn/music/photo_new/T001R300x300M000${mid}.jpg?max_age=2592000`
+const getAlbumPic = (mid: string) => `https://y.gtimg.cn/music/photo_new/T002R300x300M000${mid}.jpg?max_age=2592000`
+const getZhidaPic2 = (mid: string) => `https://y.gtimg.cn/music/photo_new/T001R68x68M000${mid}.jpg?max_age=2592000`
+const getZhidaPic3 = (mid: string) => `https://y.gtimg.cn/music/photo_new/T002R68x68M000${mid}.jpg?max_age=2592000`
+
 export {
     formatNum,
     shuffle,
     getIndex,
     getRandomItem,
+    getSingerPic,
+    getAlbumPic,
+    getZhidaPic2,
+    getZhidaPic3,
 }

@@ -26,16 +26,16 @@ export default class App extends Vue {
 <style lang="scss">
 #app {
     height: 100%;
-    .m-header {
+    .header {
         height: 8%;
     }
-    .m-nav {
+    .nav {
         height: 7.5%;
     }
     .app-content {
         height: 84.5%;
     }
-    .m-footer {
+    .footer {
         height: 10%;
     }
 

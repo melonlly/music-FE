@@ -1,6 +1,6 @@
 <template>
     <div class="recommend">
-        <scroller ref="content" v-if="hots.length" :data="hots">
+        <scroller ref="content" v-if="hots.length" :dataList="hots">
             <div class="recommend-slider">
                 <slide v-if="recommends.length">
                     <div v-for="item in recommends" :key="item.id">

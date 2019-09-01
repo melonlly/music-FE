@@ -13,7 +13,10 @@ import { formatNum } from '@/utils/utils'
 })
 export default class Listener extends Vue {
 	name: string = 'Listener'
-	@Prop() private readonly num: number = 0
+    @Prop({
+        default: 0
+    })
+    private readonly num?: number
 	format = formatNum
 }
 </script>
