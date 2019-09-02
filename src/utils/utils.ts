@@ -15,6 +15,16 @@ const formatNum = (num: number) => {
     }
     return formatStr
 }
+// 格式化时间（分：秒）
+const formatTime = (seconds: number) => {
+    if (seconds && seconds > 0) {
+        const minute = Math.floor(seconds / 60)
+        const second = seconds % 60
+        return `${minute}:${second < 10 ? '0' + second : second}`
+    } else {
+        return '0:00'
+    }
+}
 
 // 随机重新排列数组
 const shuffle = (list: []) => {
@@ -45,6 +55,7 @@ const getZhidaPic3 = (mid: string) => `https://y.gtimg.cn/music/photo_new/T002R6
 
 export {
     formatNum,
+    formatTime,
     shuffle,
     getIndex,
     getRandomItem,

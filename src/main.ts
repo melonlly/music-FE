@@ -27,6 +27,9 @@ Vue.use(VueLazyLoad, {
 
 Vue.config.productionTip = false;
 
+// 非响应式属性挂载点
+Vue.prototype.$nRpsPty = {}
+
 new Vue({
     router,
     store,

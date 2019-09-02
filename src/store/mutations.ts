@@ -8,9 +8,6 @@ export default {
 	[types.SET_SINGER](state: any, singer: {}) {
 		state.singer = singer
 	},
-	[types.SET_CURRENT](state: any, current: number) {
-		state.current = current
-	},
 	[types.SET_PLAYING](state: any, playing: boolean) {
 		state.playing = playing
 	},

@@ -2,7 +2,6 @@
  * 定义所有的获取state中值的入口（getters）
  */
 const getSinger = (state: any) => state.singer
-const getCurrent = (state: any) => state.current
 const getPlaying = (state: any) => state.playing
 const getFullScreen = (state: any) => state.fullScreen
 const getMode = (state: any) => state.mode
@@ -16,7 +15,6 @@ const getLogin = (state: any) => state.login
 
 export default {
     getSinger,
-    getCurrent,
     getPlaying,
     getFullScreen,
     getMode,

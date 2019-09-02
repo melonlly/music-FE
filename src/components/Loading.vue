@@ -9,10 +9,10 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 
 @Component({
+    name: "Loading",
     components: {},
 })
 export default class Loading extends Vue {
-    name: string = 'Loading'
     @Prop({
         default: "正在载入..."
     })

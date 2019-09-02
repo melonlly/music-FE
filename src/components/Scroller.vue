@@ -11,10 +11,10 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import BScroll from 'better-scroll';
 
 @Component({
+    name: "Scroller",
     components: {}
 })
 export default class Scroller extends Vue {
-	name: string = "Scroller"
 	active: number = 0 // 默认第一个
 	children: Array<any> = [] // 子元素集合
 	scroller?: BScroll // 滚动条对象

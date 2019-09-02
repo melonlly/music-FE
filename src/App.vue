@@ -5,6 +5,16 @@
         <keep-alive>
             <router-view class="app-content"></router-view>
         </keep-alive>
+        <player></player>
+        <transition name="login">
+            <login v-if="getLogin"></login>
+        </transition>
+        <m-footer v-show="getCurrentSong.id && !getFullScreen"></m-footer>
+        <m-svg></m-svg>
+
+        <transition>
+            <sequence-list></sequence-list>
+        </transition>
     </div>
 </template>
 

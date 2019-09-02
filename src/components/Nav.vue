@@ -1,12 +1,7 @@
 <template>
     <div class="nav">
         <div class="tab">
-            <router-link
-                tag="div"
-                linkActiveClass="active"
-                @click.native="cutover(0)"
-                to="/recommend"
-            >
+            <router-link tag="div" linkActiveClass="active" @click.native="cutover(0)" to="/recommend">
                 <span>推荐</span>
             </router-link>
             <router-link tag="div" linkActiveClass="active" @click.native="cutover(1)" to="/singer">
@@ -24,21 +19,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { Route } from 'vue-router';
 
 @Component({
+    name: "Nav",
     components: {}
 })
 export default class Nav extends Vue {
-    name: string = "Nav";
     index: number = 0; // 当前下标
-    // 修改当前下标
-    cutover(index: number): void {
-        this.index = index;
-    }
-    created() {
-		const path = this.$route.path
-		if (path) {
+
+    // 监听路由变化
+    @Watch("$route")
+    onRouteChange(newR: Route, oldR: Route) {
+        const path = newR.path
+        if (path) {
             if (path.indexOf('recommend') > -1) {
                 this.cutover(0)
             } else if (path.indexOf('singer') > -1) {
@@ -49,7 +44,12 @@ export default class Nav extends Vue {
                 this.cutover(3)
             }
         }
-	}
+    }
+
+    // 修改当前下标
+    cutover(index: number): void {
+        this.index = index;
+    }
 }
 </script>
 

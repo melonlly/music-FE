@@ -39,6 +39,7 @@ import Loading from "@/components/Loading.vue";
 import Listener from "@/components/Listener.vue";
 
 @Component({
+    name: "Recommend",
     components: {
         Scroller,
         Slide,
@@ -47,10 +48,9 @@ import Listener from "@/components/Listener.vue";
     }
 })
 export default class Recommend extends Vue {
-    name: string = 'Recommend';
     recommends: Array<any> = []; // 推荐列表
     hots: Array<any> = []; // 热门列表
-    imgIsDown: boolean = false; // 是否已经刷新滚动（图片加载完成后刷新）
+    private imgIsDown: boolean = false; // 是否已经刷新滚动（图片加载完成后刷新）
     created() {
         this.getRecommend();
         this.getHots();

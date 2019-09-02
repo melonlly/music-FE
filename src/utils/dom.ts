@@ -38,8 +38,8 @@ const prefix = (() => {
     }
     return false
 })()
-const autoprefixer = (style: string) => {
-    if (!prefix) return false
+const autoprefixer = (style: string): string => {
+    if (!prefix) return ''
     if (prefix === 'standard') return style
     return `${prefix + style.charAt(0).toUpperCase() + style.substr(1)}`
 }

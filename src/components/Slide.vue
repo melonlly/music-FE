@@ -20,10 +20,15 @@ import BScroll from "better-scroll";
 import { addClass } from "@/utils/dom";
 
 @Component({
-    components: {}
+    name: "Slide",
+    components: {},
+    created() {
+        this.$nRpsPty.resizeTimer = undefined
+        this.$nRpsPty.timer = undefined
+        this.$nRpsPty.childs = undefined
+    }
 })
 export default class Slide extends Vue {
-    name: string = "Slide";
     @Prop({
         default: true
     })
@@ -57,13 +62,10 @@ export default class Slide extends Vue {
     })
     private readonly curIndex?: number // 当前下标
     
-    dots: Array<any> = []; // dot个数
+    dots: Array<any> = []; // dot数组
     currentPageIndex?: number = this.curIndex;
-
-    resizeTimer?: number;
     slide!: BScroll;
-    timer?: number;
-    children!: HTMLCollection;
+
     // dom加载完成之后
     mounted() {
         this.update();
@@ -71,8 +73,8 @@ export default class Slide extends Vue {
             if (!this.slide || !this.slide.enabled) {
                 return;
             }
-            clearTimeout(this.resizeTimer);
-            this.resizeTimer = setTimeout(() => {
+            clearTimeout(this.$nRpsPty.resizeTimer);
+            this.$nRpsPty.resizeTimer = setTimeout(() => {
                 if (this.slide.isInTransition) {
                     this.onScrollEnd();
                 } else {
@@ -100,12 +102,12 @@ export default class Slide extends Vue {
     // 失活时
     deactivated() {
         this.slide.disable();
-        clearTimeout(this.timer);
+        clearTimeout(this.$nRpsPty.timer);
     }
     // 销毁前
     beforeDestroy() {
         this.slide.disable();
-        clearTimeout(this.timer);
+        clearTimeout(this.$nRpsPty.timer);
     }
     goToPage(x: number, y: number, time?: number, easing?: object) {
         this.slide && this.slide.goToPage(x, y, time, easing);
@@ -129,7 +131,7 @@ export default class Slide extends Vue {
         this.slide.next();
     }
     init() {
-        clearTimeout(this.timer);
+        clearTimeout(this.$nRpsPty.timer);
         this.currentPageIndex = this.curIndex;
         this.setSlideWidth();
         if (this.showDot) {
@@ -147,11 +149,11 @@ export default class Slide extends Vue {
     /* 内部私有函数 */
     // 初始化Slide的宽度
     private setSlideWidth(isResize?: boolean) {
-        this.children = (this.$refs.slideGroup as Element).children;
+        this.$nRpsPty.childs = (this.$refs.slideGroup as Element).children;
         let width = 0;
         const slideWidth = (this.$refs.slide as Element).clientWidth;
-        for (let i = 0; i < this.children.length; i++) {
-            const child = this.children[i] as HTMLElement;
+        for (let i = 0; i < this.$nRpsPty.childs.length; i++) {
+            const child = this.$nRpsPty.childs[i] as HTMLElement;
             addClass(child, "slide-item");
             child.style.width = slideWidth + "px";
             width += slideWidth;
@@ -185,7 +187,7 @@ export default class Slide extends Vue {
         });
         this.slide.on("beforeScrollStart", () => {
             if (this.autoPlay) {
-                clearTimeout(this.timer);
+                clearTimeout(this.$nRpsPty.timer);
             }
             this.$emit("beforeSlideStart");
         });
@@ -201,12 +203,12 @@ export default class Slide extends Vue {
     }
     // 初始化dots
     private initDots() {
-        this.dots = new Array(this.children.length);
+        this.dots = new Array((this.$nRpsPty.childs as HTMLCollection).length);
     }
     // 开始
     private play() {
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
+        clearTimeout(this.$nRpsPty.timer);
+        this.$nRpsPty.timer = setTimeout(() => {
             this.slide.next();
         }, this.interval);
     }

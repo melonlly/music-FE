@@ -8,7 +8,7 @@ console.log(`=================================== 当前配置 end ==============
 module.exports = {
 	devServer: {
 		port: 8080,
-		// proxy: 'http://127.0.0.1:7777'
+		proxy: 'http://127.0.0.1:7777'
 	},
 	chainWebpack: config => {
 		config
