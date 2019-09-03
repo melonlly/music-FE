@@ -20,17 +20,23 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import MHeader from '@/components/Header.vue';
-import MNav from '@/components/Nav.vue';
+import MHeader from "@/components/Header.vue";
+import MNav from "@/components/Nav.vue";
+import Player from "@/components/Player.vue";
+import MSvg from "@/components/Svg.vue";
+import SequenceList from "@/components/SequenceList.vue";
 
 @Component({
+    name: "App",
     components: {
-        MHeader, MNav
-    },
+        MHeader,
+        MNav,
+        Player,
+        SequenceList,
+        MSvg
+    }
 })
-export default class App extends Vue {
-    name: string = 'App'
-}
+export default class App extends Vue {}
 </script>
 
 <style lang="scss">

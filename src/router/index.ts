@@ -27,5 +27,21 @@ export default new Router({
                 }
             ]
         },
+        {
+            name: 'rank',
+            path: '/rank',
+            component: () => import(/* webpackChunkName: "rank" */ '@/views/rank.vue'),
+            children: [
+                {
+                    path: ':mid',
+                    component: () => import(/* webpackChunkName: "rank" */ '@/views/rank-detail.vue'),
+                }
+            ]
+        },
+        {
+            name: 'search',
+            path: '/search',
+            component: () => import(/* webpackChunkName: "search" */ '@/views/search.vue'),
+        },
     ],
 })

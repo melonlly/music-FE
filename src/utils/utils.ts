@@ -39,7 +39,7 @@ const getIndex = (list: [], ele: any) => {
 }
 
 // 数组中随机获取一个元素
-const getRandomItem = (arr: []) => {
+const getRandomItem = (arr: Array<any>) => {
     if (arr && arr.length > 0) {
         const random = Math.floor(Math.random() * arr.length)
         return arr[random]
@@ -53,6 +53,16 @@ const getAlbumPic = (mid: string) => `https://y.gtimg.cn/music/photo_new/T002R30
 const getZhidaPic2 = (mid: string) => `https://y.gtimg.cn/music/photo_new/T001R68x68M000${mid}.jpg?max_age=2592000`
 const getZhidaPic3 = (mid: string) => `https://y.gtimg.cn/music/photo_new/T002R68x68M000${mid}.jpg?max_age=2592000`
 
+// 去除数组中某个值
+const removeItem = (arr: Array<any>, key: string, value: string) => {
+    if (arr && arr.length > 0 && key && value) {
+        const index = arr.findIndex(item => {
+            return item[key] === value
+        })
+        arr.splice(index, 1)
+    }
+}
+
 export {
     formatNum,
     formatTime,
@@ -63,4 +73,5 @@ export {
     getAlbumPic,
     getZhidaPic2,
     getZhidaPic3,
+    removeItem,
 }

@@ -71,7 +71,7 @@ export default class ProgressBar extends Vue {
         const w = (this.$refs.progress as HTMLElement).style.width || "0";
         this.$emit(
             "percent",
-            parseInt(w.replace("px", "")) / this.$nRpsPty.barWidth
+            parseInt(w.replace("px", ""), 10) / this.$nRpsPty.barWidth
         );
     }
 }

@@ -22,10 +22,12 @@ export default class PlayerMixin extends Vue {
 	@Mutation("SET_CURRENTINDEX")
 	setCurrentIndex!: (index: number) => void
 	@Mutation("SET_MODE")
-    setMode!: (mode: string) => void
+	setMode!: (mode: string) => void
+	@Mutation("SET_ISSHOWLIST")
+	setIsShowList!: (isShowList: boolean) => void
 
 	// 上一首
-	private prev() {
+	prev() {
 		if (this.currentIndex === 0) {
 			this.setCurrentIndex(this.sequenceList.length - 1)
 		} else {
@@ -33,7 +35,7 @@ export default class PlayerMixin extends Vue {
 		}
 	}
 	// 下一首
-	private next() {
+	next() {
 		if (this.currentIndex === this.sequenceList.length - 1) {
 			this.setCurrentIndex(0)
 		} else {

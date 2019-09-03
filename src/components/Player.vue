@@ -2,7 +2,7 @@
     <div class="player" v-show="getSequenceList.length > 0">
         <transition name="player">
             <div class="base-player" v-show="getFullScreen" ref="player">
-                <div class="bg" :style="bgStyle"></div>
+                <div class="bg" :style="albumBgStyle"></div>
                 <header>
                     <i class="back" @click="fullScreen(false)"></i>
                     <div class="title">{{ getCurrentSong.name }}</div>
@@ -15,7 +15,8 @@
                             <div class="plate" ref="plate"></div>
                         </div>
                         <div class="slide-wrapper" ref="slide">
-                            <slide v-if="getSequenceList.length"
+                            <slide
+                                v-if="getSequenceList.length"
                                 :showDot="false"
                                 :autoPlay="false"
                                 :curIndex="getCurrentIndex"
@@ -26,23 +27,24 @@
                                 ref="slider"
                             >
                                 <div v-for="song in getSequenceList" :key="song.id" class="cd">
-                                    <div class="cdImg" :style="getImgURL(song.album.mid)" ref="CD"></div>
+                                    <div
+                                        class="cdImg"
+                                        :style="getSongBgImgURL(song.album.mid)"
+                                        ref="CD"
+                                    ></div>
                                 </div>
                             </slide>
                         </div>
                     </div>
                     <div class="content-wrapper lyrics-wrapper" v-show="lyrics" @click="showLyrics">
-                        <scroller class="lyrics-lines" ref="lyricsScroller"
-                            :dataList="lines"
-                        >
+                        <scroller class="lyrics-lines" ref="lyricsScroller" :dataList="lines">
                             <div class="lines">
-                                <p 
-                                    :class="{ 'lyrics-line': true, 'active': index === lineIndex }" 
-                                    v-for="(word, index) in lines" :key="index"
+                                <p
+                                    :class="{ 'lyrics-line': true, 'active': index === lineIndex }"
+                                    v-for="(word, index) in lines"
+                                    :key="index"
                                     ref="line"
-                                >
-                                    {{ word }}
-                                </p>
+                                >{{ word }}</p>
                             </div>
                         </scroller>
                     </div>
@@ -65,11 +67,11 @@
                 </div>
             </div>
         </transition>
-        
+
         <transition name="mini">
             <div class="mini-player" v-show="!getFullScreen">
                 <div class="cd play" ref="minCD" @click="fullScreen(true)">
-                    <img src="~assets/images/tmp.jpg" ref="miniCDimg">
+                    <img src="~assets/images/tmp.jpg" ref="miniCDimg" />
                 </div>
                 <div class="describe">
                     <div class="title">{{ getCurrentSong.name }}</div>
@@ -83,50 +85,366 @@
         </transition>
 
         <audio ref="audio" :src="getCurrentSong.url" @play="ready" @error="error"></audio>
-
     </div>
 </template>
 
 <script lang="ts">
-import { Component } from "vue-property-decorator";
-import { getAlbumPic, formatTime } from '@/utils/utils'
-import { addClass, removeClass } from '@/utils/dom'
-import { MODE } from '@/utils/constants'
-import ProgressBar from '@/components/ProgressBar.vue'
-import Slide from '@/components/Slide.vue'
-import Scroller from '@/components/Scroller.vue'
-import { Getter, Mutation } from "vuex-class"
-import PlayerMixin from "@/components/PlayerMixin"
-import { mixins } from 'vue-class-component';
+import { Component, Watch } from "vue-property-decorator";
+import { getAlbumPic, formatTime } from "@/utils/utils";
+import { addClass, removeClass } from "@/utils/dom";
+import { MODE } from "@/utils/constants";
+import ProgressBar from "@/components/ProgressBar.vue";
+import Slide from "@/components/Slide.vue";
+import Scroller from "@/components/Scroller.vue";
+import PlayerMixin from "@/components/PlayerMixin";
+import { mixins } from "vue-class-component";
 
 @Component({
-	name: 'Player',
-	components: {
-		ProgressBar,
-		Slide,
-		Scroller,
-	},
+    name: "Player",
+    components: {
+        ProgressBar,
+        Slide,
+        Scroller
+    }
 })
 export default class Player extends mixins(PlayerMixin) {
-	// 歌曲是否准备好
-	songReady: boolean = false
-	// 当前时间
-	time: number =  0
-	// 定时器
-	timer: number = 0
-	// 是否正在查看歌词
-	lyrics: boolean =  false
-	// 歌词列表
-	lines: Array<any> =  []
-	// 时间区间
-	sections: Array<any> = []
-	// 当前播放到哪一句
-	lineIndex: number = 0
+    // 歌曲是否准备好
+    songReady: boolean = false;
+    // 当前时间
+    time: number = 0;
+    // 定时器
+    timer: number = 0;
+    // 是否正在查看歌词
+    lyrics: boolean = false;
+    // 歌词列表
+    lines: Array<any> = [];
+    // 时间区间
+    sections: Array<any> = [];
+    // 当前播放到哪一句
+    lineIndex: number = 0;
 
-	private _formatTime(time: number) {
-		return formatTime(time)
-	}
-	
+    @Watch("currentSong")
+    onCurrentSongChange(newSong: any, oldSong: any) {
+        clearInterval(this.timer);
+        this.timer = 0;
+        (this.$refs.audio as any).pause()(this.$refs
+            .audio as any).currentTime = 0;
+        this.songReady = false;
+        this.time = 0;
+
+        const albumPic = getAlbumPic(this.currentSong.album.mid);
+        // this.$refs.bgImg.setAttribute('src', album_pic)
+        // this.$refs.cdImg.setAttribute('src', album_pic)
+        (this.$refs.miniCDimg as HTMLElement).setAttribute("src", albumPic);
+        this.$nextTick(() => {
+            const playerWidth = (this.$refs.player as HTMLElement).clientWidth;
+            (this.$refs.plate as HTMLElement).style.height = `${playerWidth *
+                0.8}px`;
+            (this.$refs.slide as HTMLElement).style.height = `${playerWidth *
+                0.8}px`;
+
+            this.formatLyrics();
+            this.play();
+        });
+    }
+    // 当前时间 -> 当前行
+    @Watch("time")
+    onTimeChange(now: number) {
+        let lineIndex = 0;
+        const sections = this.sections;
+        const lines = this.lines;
+        const time = now;
+        if (sections && sections.length > 0) {
+            for (let i = 0; i < sections.length; i++) {
+                if (time >= sections[i]) {
+                    lineIndex = i;
+                } else {
+                    break;
+                }
+            }
+        }
+        // 处理空行情况（空行时，设置当前行为上一行）
+        if (!lines[lineIndex]) {
+            lineIndex -= 1;
+        }
+        this.lineIndex = lineIndex;
+    }
+    // 当前行下标
+    @Watch("lineIndex")
+    onLineIndexChange(newIndex: number) {
+        (this.$refs.lyricsScroller as Scroller).scrollToElement(
+            (this.$refs.line as HTMLElement[])[newIndex],
+            300,
+            false,
+            true
+        );
+    }
+
+    // 获取专辑背景图片
+    private get albumBgStyle() {
+        const mid = this.currentSong.album ? this.currentSong.album.mid : "";
+        return `background-image:url(${
+            mid ? getAlbumPic(mid) : "~assets/images/tmp.jpg"
+        })`;
+    }
+    // 当前进度百分比
+    private get percent() {
+        return this.time / this.currentSong.interval;
+    }
+    // 获取模式对应样式
+    private get getModeCls() {
+        let clsName = "";
+        switch (this.mode) {
+            // 列表循环
+            case MODE.ORDER: {
+                clsName = "order";
+                break;
+            }
+            // 单曲循环
+            case MODE.SINGLE: {
+                clsName = "single";
+                break;
+            }
+            // 随机播放
+            case MODE.RANDOM: {
+                clsName = "random";
+                break;
+            }
+            default: {
+                clsName = "order";
+                break;
+            }
+        }
+        return clsName;
+    }
+
+    private _formatTime(time: number) {
+        return formatTime(time);
+    }
+    // 设置是否全屏
+    private _fullScreen(full: boolean) {
+        this.lyrics = false;
+        this.setFullScreen(full);
+    }
+    // 显示/隐藏 歌词
+    private showLyrics() {
+        this.lyrics = !this.lyrics;
+    }
+    // 音频加载完成
+    private ready() {
+        this.songReady = true;
+    }
+    // 音频加载异常
+    private error() {
+        this.songReady = true;
+    }
+    // 切换模式
+    private switchMode() {
+        switch (this.mode) {
+            // 顺序播放
+            case MODE.ORDER: {
+                this.setMode(MODE.SINGLE);
+                break;
+            }
+            // 单曲循环
+            case MODE.SINGLE: {
+                this.setMode(MODE.RANDOM);
+                break;
+            }
+            // 随机播放
+            case MODE.RANDOM: {
+                this.setMode(MODE.ORDER);
+                break;
+            }
+            default: {
+                this.setMode(MODE.SINGLE);
+                break;
+            }
+        }
+    }
+    // 上一首
+    private rollback() {
+        this.onBeforeSlideStart();
+        this.prev();
+    }
+    // 播放/暂停
+    private togglePlay() {
+        if (this.playing) {
+            this.paused();
+        } else {
+            this.play();
+        }
+    }
+    // 重播
+    private replay() {
+        this.paused();
+        this.time = 0;
+        (this.$refs.audio as any).currentTime = 0;
+        this.play();
+    }
+    // 下一首
+    private forward() {
+        this.onBeforeSlideStart();
+        this.next();
+    }
+    // 收藏
+    private collect() {
+        return
+    }
+    // 播放
+    private play() {
+        const playBtn = this.$refs.playBtn as HTMLElement;
+        const minPlayBtn = this.$refs.minPlayBtn as HTMLElement;
+        const cd = (this.$refs.CD as HTMLElement[])[this.currentIndex];
+        const minCD = this.$refs.minCD as HTMLElement;
+        const bar = this.$refs.bar as HTMLElement;
+        this.setPlaying(true);
+
+        // 设置按钮状态
+        removeClass(playBtn, "play");
+        addClass(playBtn, "stop");
+        removeClass(cd, "paused");
+        addClass(cd, "play");
+        removeClass(minPlayBtn, "play");
+        addClass(minPlayBtn, "stop");
+        removeClass(minCD, "paused");
+        addClass(bar, "on");
+
+        this.timer = setInterval(this._play, 1000);
+        (this.$refs.audio as any).play();
+    }
+    // 暂停
+    private paused() {
+        const playBtn = this.$refs.playBtn as HTMLElement;
+        const minPlayBtn = this.$refs.minPlayBtn as HTMLElement;
+        const cd = (this.$refs.CD as HTMLElement[])[this.currentIndex];
+        const minCD = this.$refs.minCD as HTMLElement;
+        const bar = this.$refs.bar as HTMLElement;
+        this.setPlaying(false);
+
+        // 设置按钮状态
+        removeClass(playBtn, "stop");
+        addClass(playBtn, "play");
+        addClass(cd, "paused");
+        removeClass(minPlayBtn, "stop");
+        addClass(minPlayBtn, "play");
+        addClass(minCD, "paused");
+        removeClass(bar, "on");
+
+        clearInterval(this.timer);
+
+        (this.$refs.audio as any).pause();
+    }
+    // 进度条改变事件
+    private onPercentChange(newPercent: number) {
+        this.time = Math.floor(this.currentSong.interval * newPercent);
+        // 设置音频当前时间
+        (this.$refs.audio as any).currentTime = this.time;
+    }
+    // 横向滑动切歌 - 开始时触发事件
+    private onBeforeSlideStart() {
+        if (this.sequenceList.length <= 1) return false;
+        const index = this.currentIndex;
+        const list = this.sequenceList;
+        const prev = (this.$refs.CD as HTMLElement[])[
+            index === 0 ? list.length - 1 : index - 1
+        ];
+        const next = (this.$refs.CD as HTMLElement[])[
+            index === list.length - 1 ? 0 : index + 1
+        ];
+        removeClass(this.$refs.bar as HTMLElement, "on");
+        removeClass(prev, "play");
+        removeClass(next, "play");
+    }
+    // 横向滑动切歌 - 结束时触发事件
+    private onSlideTouchEnd() {
+        addClass(this.$refs.bar as HTMLElement, "on");
+    }
+    // 歌曲切换事件
+    private onPageIndexChange(index: number) {
+        this.setCurrentIndex(index);
+        (this.$refs.slider as Slide).goToPage(index, 0, 400);
+    }
+    // 格式化歌词
+    private formatLyrics() {
+        let rows: string[] = []; // 行
+        const lines: string[] = []; // 歌词列表
+        const sections: number[] = []; // 歌词区间
+        if (this.currentSong.lyrics) {
+            const div = document.createElement("div");
+            div.innerHTML = this.currentSong.lyrics;
+            rows = div.innerHTML.split("\n");
+            rows.forEach((row, index) => {
+                const parts = row.split("]");
+                const time = parts[0].replace("[", "");
+                const line = parts[1];
+                // 00:00.0
+                if (new RegExp(/^(\d{2}):(\d{2}).(\d{2})$/).test(time)) {
+                    const minutes = parseInt(time.split(":")[0], 10);
+                    const seconds = parseFloat(time.split(":")[1]);
+                    sections.push(minutes * 60 + seconds);
+                    lines.push(line);
+                }
+            });
+        } else {
+            lines.push("暂无歌词");
+        }
+        this.lines = lines;
+        this.sections = sections;
+    }
+    // 获取图片地址
+    private getSongBgImgURL(mid: string) {
+        return `background-image:url(${
+            mid ? getAlbumPic(mid) : "~assets/images/tmp.jpg"
+        })`;
+    }
+    // 播放事件（定时器事件）
+    private _play() {
+        if (this.time < this.currentSong.interval) {
+            this.time++;
+        } else {
+            this.time = 0;
+            this._loop(); // 播放轮询
+        }
+    }
+    // 播放轮询
+    private _loop() {
+        switch (this.mode) {
+            // 顺序播放
+            case MODE.ORDER: {
+                this.next();
+                break;
+            }
+            // 单曲循环
+            case MODE.SINGLE: {
+                this.replay();
+                break;
+            }
+            // 随机播放
+            case MODE.RANDOM: {
+                this.next();
+                break;
+            }
+            default: {
+                this.next();
+                break;
+            }
+        }
+    }
+    // 获取CD与miniCD之间的相对坐标和缩放比例
+    private _getPosAndScale() {
+        const winInnerWidth = window.innerWidth;
+        const winInnerHeight = window.innerHeight;
+        const targetWidth = 48; // miniCD的宽度
+        const left = winInnerWidth * 0.05;
+        const bottom = 0;
+        const top = winInnerHeight * 0.1;
+        const width = winInnerWidth * 0.8; // CD的宽度
+        const scale = targetWidth / width;
+        const x = -(winInnerWidth / 2 - left);
+        const y = winInnerHeight - top - width / 2 - bottom;
+        return { x, y, scale };
+    }
 }
 </script>
 
@@ -142,13 +460,16 @@ export default class Player extends mixins(PlayerMixin) {
         right: 0;
         z-index: 150;
         background: $background-color;
-        &.player-enter-active, &.player-leave-active {
+        &.player-enter-active,
+        &.player-leave-active {
             transition: all 0.4s;
-            header, .operate {
-                transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32)
+            header,
+            .operate {
+                transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32);
             }
         }
-        &.player-enter, &.player-leave-to {
+        &.player-enter,
+        &.player-leave-to {
             opacity: 0;
             header {
                 transform: translate3d(0, -100px, 0);
@@ -169,7 +490,7 @@ export default class Player extends mixins(PlayerMixin) {
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            transition: background .5s;
+            transition: background 0.5s;
         }
         header {
             position: relative;
@@ -183,7 +504,7 @@ export default class Player extends mixins(PlayerMixin) {
                 z-index: 50;
                 width: 32px;
                 height: 32px;
-                @include bg-image("../../common/images/back");
+                @include bg-image("~assets/images/back");
                 background-size: contain;
                 transform: rotate(270deg);
             }
@@ -219,7 +540,7 @@ export default class Player extends mixins(PlayerMixin) {
                         width: 20%;
                         height: 100%;
                         margin-left: 48%;
-                        background-image: url('~assets/images/bar.png');
+                        background-image: url("~assets/images/bar.png");
                         background-size: contain;
                         background-repeat: no-repeat;
                         z-index: 10;
@@ -238,7 +559,7 @@ export default class Player extends mixins(PlayerMixin) {
                         .plate {
                             width: 80%;
                             border-radius: 100%;
-                            border: 10px solid rgba(163, 164, 167, .3);
+                            border: 10px solid rgba(163, 164, 167, 0.3);
                         }
                     }
                     .slide-wrapper {
@@ -269,7 +590,7 @@ export default class Player extends mixins(PlayerMixin) {
                                         right: 0;
                                         top: 0;
                                         bottom: 0;
-                                        background-image: url('~assets/images/record.png');
+                                        background-image: url("~assets/images/record.png");
                                         background-size: cover;
                                     }
                                 }
@@ -295,7 +616,7 @@ export default class Player extends mixins(PlayerMixin) {
                         }
                     }
                     &:before {
-                        content: ' ';
+                        content: " ";
                         position: absolute;
                         top: 0;
                         left: 0;
@@ -317,7 +638,8 @@ export default class Player extends mixins(PlayerMixin) {
                 @include centered;
                 margin: 8% 0;
                 font-size: $font-size-M;
-                .start, .end {
+                .start,
+                .end {
                     display: inline-block;
                 }
                 .progress-bar-wrapper {
@@ -339,28 +661,28 @@ export default class Player extends mixins(PlayerMixin) {
                         transform: scale(1.3);
                     }
                     &.order {
-                        background-image: url('~assets/images/order.png');
+                        background-image: url("~assets/images/order.png");
                     }
                     &.single {
-                        background-image: url('~assets/images/single.png');
+                        background-image: url("~assets/images/single.png");
                     }
                     &.random {
-                        background-image: url('~assets/images/random.png');
+                        background-image: url("~assets/images/random.png");
                     }
                     &.prev {
-                        background-image: url('~assets/images/prev.png');
+                        background-image: url("~assets/images/prev.png");
                     }
                     &.stop {
-                        background-image: url('~assets/images/stop.png');
+                        background-image: url("~assets/images/stop.png");
                     }
                     &.play {
-                        background-image: url('~assets/images/play.png');
+                        background-image: url("~assets/images/play.png");
                     }
                     &.next {
-                        background-image: url('~assets/images/next.png');
+                        background-image: url("~assets/images/next.png");
                     }
                     &.collect {
-                        background-image: url('~assets/images/collect.png');
+                        background-image: url("~assets/images/collect.png");
                     }
                 }
             }
@@ -376,10 +698,12 @@ export default class Player extends mixins(PlayerMixin) {
         width: 100%;
         z-index: 200;
         background: #000000;
-        &.mini-enter-active, &.mini-leave-active {
+        &.mini-enter-active,
+        &.mini-leave-active {
             transition: all 0.4s;
         }
-        &.mini-enter, &.mini-leave-to {
+        &.mini-enter,
+        &.mini-leave-to {
             opacity: 0;
         }
         .cd {
@@ -420,14 +744,14 @@ export default class Player extends mixins(PlayerMixin) {
                 background-size: contain;
                 &.play {
                     margin-right: 25px;
-                    background-image: url('~assets/images/play.png');
+                    background-image: url("~assets/images/play.png");
                 }
                 &.stop {
                     margin-right: 25px;
-                    background-image: url('~assets/images/stop.png');
+                    background-image: url("~assets/images/stop.png");
                 }
                 &.show-sequence-list {
-                    background-image: url('~assets/images/list.png');
+                    background-image: url("~assets/images/list.png");
                 }
             }
         }
