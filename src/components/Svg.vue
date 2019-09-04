@@ -65,10 +65,10 @@
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
-    name: 'Svg',
+    name: 'MSvg',
     components: {},
 })
-export default class Svg extends Vue {
+export default class MSvg extends Vue {
 
 }
 </script>

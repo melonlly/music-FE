@@ -31,7 +31,7 @@ export default class Footer extends Vue {
             height: 32px;
             margin-right: 9px;
             background-size: 30px 32px;
-            @include bg-image("logo");
+            @include bg-image("~assets/images/logo");
         }
     }
 }

@@ -17,8 +17,8 @@
                 <span class="cancel" v-show="isInput" @click="cancel">取消</span>
             </div>
             <div class="content-wrapper" ref="contentScroller" v-show="songs.length === 0">
-                <scroller class="search-content">
-                    <div class="hot" v-show="!search_null">
+                <scroller class="search-content" :dataList="songs">
+                    <div class="hot" v-show="!searchNull">
                         <div class="title">热门搜索</div>
                         <div class="keys">
                             <span
@@ -29,7 +29,7 @@
                             >{{ key }}</span>
                         </div>
                     </div>
-                    <div class="history" v-show="history.length > 0 && !search_null">
+                    <div class="history" v-show="history.length > 0 && !searchNull">
                         <div class="title">
                             搜索历史
                             <span

@@ -48,7 +48,9 @@ export default class Login extends Vue {
         this.password = e.target.value || "";
     }
     // 登录
-    private login() {}
+    private login() {
+        return
+    }
 }
 </script>
 

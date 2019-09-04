@@ -45,7 +45,7 @@ const autoprefixer = (style: string): string => {
 }
 
 // 当前容器是否包含目标元素
-const isContain = (container: Node, target: Node) => {
+const isContain = (container: HTMLElement, target: HTMLElement) => {
     if (container && target) {
         let flag = false
         while (target.parentNode) {
@@ -55,7 +55,7 @@ const isContain = (container: Node, target: Node) => {
             } else {
                 flag = false
             }
-            target = target.parentNode
+            target = target.parentNode as HTMLElement
         }
         return flag
     } else {

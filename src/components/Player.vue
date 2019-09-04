@@ -1,12 +1,12 @@
 <template>
-    <div class="player" v-show="getSequenceList.length > 0">
+    <div class="player" v-show="sequenceList.length > 0">
         <transition name="player">
-            <div class="base-player" v-show="getFullScreen" ref="player">
+            <div class="base-player" v-show="fullScreen" ref="player">
                 <div class="bg" :style="albumBgStyle"></div>
                 <header>
-                    <i class="back" @click="fullScreen(false)"></i>
-                    <div class="title">{{ getCurrentSong.name }}</div>
-                    <div class="name">{{ getCurrentSong.singer_name }}</div>
+                    <i class="back" @click="setFullScreen(false)"></i>
+                    <div class="title">{{ currentSong.name }}</div>
+                    <div class="name">{{ currentSong.singer_name }}</div>
                 </header>
                 <div class="content">
                     <div class="content-wrapper cd-wrapper" v-show="!lyrics" @click="showLyrics">
@@ -16,17 +16,17 @@
                         </div>
                         <div class="slide-wrapper" ref="slide">
                             <slide
-                                v-if="getSequenceList.length"
+                                v-if="sequenceList.length"
                                 :showDot="false"
                                 :autoPlay="false"
-                                :curIndex="getCurrentIndex"
-                                :loop="getSequenceList.length > 1"
+                                :curIndex="currentIndex"
+                                :loop="sequenceList.length > 1"
                                 @pageIndex="onPageIndexChange"
                                 @beforeSlideStart="onBeforeSlideStart"
                                 @touchEnd="onSlideTouchEnd"
                                 ref="slider"
                             >
-                                <div v-for="song in getSequenceList" :key="song.id" class="cd">
+                                <div v-for="song in sequenceList" :key="song.id" class="cd">
                                     <div
                                         class="cdImg"
                                         :style="getSongBgImgURL(song.album.mid)"
@@ -51,11 +51,11 @@
                 </div>
                 <div class="operate">
                     <div class="player">
-                        <div class="start">{{ formatTime(time) }}</div>
+                        <div class="start">{{ _formatTime(time) }}</div>
                         <div class="progress-bar-wrapper">
                             <progress-bar :percent="percent" @percent="onPercentChange"></progress-bar>
                         </div>
-                        <div class="end">{{ formatTime(getCurrentSong.interval) }}</div>
+                        <div class="end">{{ _formatTime(currentSong.interval) }}</div>
                     </div>
                     <div class="btns">
                         <i :class="getModeCls" @click="switchMode"></i>
@@ -69,22 +69,22 @@
         </transition>
 
         <transition name="mini">
-            <div class="mini-player" v-show="!getFullScreen">
-                <div class="cd play" ref="minCD" @click="fullScreen(true)">
+            <div class="mini-player" v-show="!fullScreen">
+                <div class="cd play" ref="minCD" @click="setFullScreen(true)">
                     <img src="~assets/images/tmp.jpg" ref="miniCDimg" />
                 </div>
                 <div class="describe">
-                    <div class="title">{{ getCurrentSong.name }}</div>
-                    <div class="name">{{ getCurrentSong.singer_name }}</div>
+                    <div class="title">{{ currentSong.name }}</div>
+                    <div class="name">{{ currentSong.singer_name }}</div>
                 </div>
                 <div class="btns">
                     <i class="stop" @click="togglePlay" ref="minPlayBtn"></i>
-                    <i class="show-sequence-list" @click="set_isShowList(true)"></i>
+                    <i class="show-sequence-list" @click="setIsShowList(true)"></i>
                 </div>
             </div>
         </transition>
 
-        <audio ref="audio" :src="getCurrentSong.url" @play="ready" @error="error"></audio>
+        <audio ref="audio" :src="currentSong.url" @play="ready" @error="error"></audio>
     </div>
 </template>
 
@@ -127,8 +127,8 @@ export default class Player extends mixins(PlayerMixin) {
     onCurrentSongChange(newSong: any, oldSong: any) {
         clearInterval(this.timer);
         this.timer = 0;
-        (this.$refs.audio as any).pause()(this.$refs
-            .audio as any).currentTime = 0;
+        (this.$refs.audio as any).pause();
+        (this.$refs.audio as any).currentTime = 0;
         this.songReady = false;
         this.time = 0;
 
@@ -138,10 +138,8 @@ export default class Player extends mixins(PlayerMixin) {
         (this.$refs.miniCDimg as HTMLElement).setAttribute("src", albumPic);
         this.$nextTick(() => {
             const playerWidth = (this.$refs.player as HTMLElement).clientWidth;
-            (this.$refs.plate as HTMLElement).style.height = `${playerWidth *
-                0.8}px`;
-            (this.$refs.slide as HTMLElement).style.height = `${playerWidth *
-                0.8}px`;
+            (this.$refs.plate as HTMLElement).style.height = `${playerWidth * 0.8}px`;
+            (this.$refs.slide as HTMLElement).style.height = `${playerWidth * 0.8}px`;
 
             this.formatLyrics();
             this.play();
@@ -289,7 +287,7 @@ export default class Player extends mixins(PlayerMixin) {
     }
     // 收藏
     private collect() {
-        return
+        return;
     }
     // 播放
     private play() {

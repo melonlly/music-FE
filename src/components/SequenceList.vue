@@ -1,6 +1,6 @@
 <template>
     <div class="sequence-list" v-show="isShowList">
-        <scroller class="sequence-scroller" v-if="sequenceList.length > 0">
+        <scroller class="sequence-scroller" v-if="sequenceList.length > 0" :dataList="sequenceList">
             <ul>
                 <li v-for="(song, index) in sequenceList" :key="index">
                     <span>{{ song.name }}</span>

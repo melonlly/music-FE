@@ -1,6 +1,6 @@
 <template>
     <div class="rank">
-        <scroller v-if="rankList.length" class="rank-wrapper">
+        <scroller v-if="rankList.length" class="rank-wrapper" :dataList="rankList">
             <div
                 class="item"
                 v-for="(item, index) in rankList"
@@ -40,7 +40,11 @@ import Loading from "@/components/Loading.vue";
 
 @Component({
     name: "Rank",
-    components: {}
+    components: {
+        Listener,
+        Scroller,
+        Loading
+    }
 })
 export default class Rank extends Vue {
     rankList: Array<any> = [];
