@@ -2,37 +2,61 @@
  * 与getters相对于的setters，修改state中的值
  */
 
-import types from './mutation-types'
+import { 
+	SET_SINGER,
+	SET_CURRENTINDEX,
+	SET_FULLSCREEN,
+	SET_ISSHOWLIST,
+	SET_MODE,
+	SET_PLAYING,
+	SET_SEQUENCELIST,
+	SET_RANK,
+	SET_SHOWLOGIN,
+	SET_SONGLIST,
+	SET_TO,
+	SET_USERINFO,
+	SET_FROM,
+ } from './mutation-types'
+import { State } from './state'
 
 export default {
-	[types.SET_SINGER](state: any, singer: {}) {
+	[SET_SINGER](state: State, singer: {}) {
 		state.singer = singer
 	},
-	[types.SET_PLAYING](state: any, playing: boolean) {
+	[SET_PLAYING](state: State, playing: boolean) {
 		state.playing = playing
 	},
-	[types.SET_FULLSCREEN](state: any, fullScreen: boolean) {
+	[SET_FULLSCREEN](state: State, fullScreen: boolean) {
 		state.fullScreen = fullScreen
 	},
-	[types.SET_MODE](state: any, mode: string) {
+	[SET_MODE](state: State, mode: string) {
 		state.mode = mode
 	},
-	[types.SET_SONGLIST](state: any, songList: []) {
+	[SET_SONGLIST](state: State, songList: []) {
 		state.songList = songList
 	},
-	[types.SET_SEQUENCELIST](state: any, sequenceList: []) {
+	[SET_SEQUENCELIST](state: State, sequenceList: []) {
 		state.sequenceList = sequenceList
 	},
-	[types.SET_CURRENTINDEX](state: any, currentIndex: number) {
+	[SET_CURRENTINDEX](state: State, currentIndex: number) {
 		state.currentIndex = currentIndex
 	},
-	[types.SET_RANK](state: any, rank: {}) {
+	[SET_RANK](state: State, rank: {}) {
 		state.rank = rank
 	},
-	[types.SET_ISSHOWLIST](state: any, isShowList: boolean) {
+	[SET_ISSHOWLIST](state: State, isShowList: boolean) {
 		state.isShowList = isShowList
 	},
-	[types.SET_LOGIN](state: any, login: boolean) {
-		state.login = login
+	[SET_USERINFO](state: State, userinfo: any) {
+		state.userinfo = userinfo
+	},
+	[SET_SHOWLOGIN](state: State, showLogin: boolean) {
+		state.showLogin = showLogin
+	},
+	[SET_TO](state: State, to: string) {
+		state.to = to
+	},
+	[SET_FROM](state: State, from: string) {
+		state.from = from
 	}
 }

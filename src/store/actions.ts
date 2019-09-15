@@ -3,7 +3,13 @@
  *   当有同时有多个state需要更新，则可定义一个action来统一提交
  */
 
-import types from './mutation-types'
+import { 
+    SET_SEQUENCELIST,
+    SET_SONGLIST,
+    SET_PLAYING,
+    SET_FULLSCREEN,
+    SET_CURRENTINDEX
+ } from './mutation-types'
 import { shuffle, getIndex } from '../utils/utils'
 import { MODE } from '../utils/constants'
 
@@ -18,7 +24,7 @@ export default {
 	selectSong({commit, state}: any, {list, index}: any) {
         let sequenceList = []
         // 1
-        commit(types.SET_SONGLIST, list)
+        commit(SET_SONGLIST, list)
         switch (state.mode) {
             // 列表循环
             case MODE.ORDER: {
@@ -42,12 +48,12 @@ export default {
                 break
             }
         }
-        commit(types.SET_SEQUENCELIST, sequenceList)
+        commit(SET_SEQUENCELIST, sequenceList)
         // 2
-        commit(types.SET_PLAYING, true)
+        commit(SET_PLAYING, true)
         // 3
-        commit(types.SET_FULLSCREEN, true)
+        commit(SET_FULLSCREEN, true)
         // 4
-        commit(types.SET_CURRENTINDEX, index)
+        commit(SET_CURRENTINDEX, index)
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <i class="back" @click="exit"></i>
+        <back @back="exit"></back>
         <div class="logo-wrapper">
             <div class="icon"></div>
             <div class="wave in"></div>
@@ -8,38 +8,64 @@
         </div>
         <div class="login-wrapper">
             <div class="input-box user-name">
-                <input type="text" placeholder="请输入用户名" ref="name" @input="onNameInput" />
+                <input
+                    type="text"
+                    placeholder="请输入用户名"
+                    autocomplete="off"
+                    ref="name"
+                    @input="onNameInput"
+                />
             </div>
             <div class="input-box user-password">
-                <input type="password" placeholder="请输入密码" ref="password" @input="onPasswordInput" />
+                <input
+                    type="password"
+                    placeholder="请输入密码"
+                    autocomplete="off"
+                    ref="password"
+                    @input="onPasswordInput"
+                />
             </div>
         </div>
         <div class="btn-wrapper">
-            <div class="login-btn" @click="login">登录</div>
+            <div :class="getLoginCls" @click="login">登录</div>
+            <div :class="getLoginCls" @click="register">注册</div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Mutation } from "vuex-class";
+import { Mutation, Getter } from "vuex-class";
+import { encrypt } from "@/utils/utils";
+import Back from '@/components/Back.vue';
 
 @Component({
     name: "Login",
-    components: {}
+    components: {
+        Back
+    }
 })
 export default class Login extends Vue {
     name: string = ""; // 登录名
     password: string = ""; // 密码
-    @Mutation("SET_LOGIN")
-    setLogin!: (login: boolean) => void;
+
+    @Getter("getTo") toPath!: string
+
+    @Mutation("SET_USERINFO")
+    private setUserInfo!: (userinfo: any) => void
+    @Mutation("SET_SHOWLOGIN")
+    private setShowLogin!: (showLogin: boolean) => void
 
     activated() {
         (this.$refs.name as any).focus();
     }
 
+    private get getLoginCls() {
+        return this.check() ? "login-btn" : "login-btn disable";
+    }
+
     private exit() {
-        this.setLogin(false);
+        this.setShowLogin(false)
     }
     private onNameInput(e: any) {
         this.name = e.target.value || "";
@@ -49,7 +75,55 @@ export default class Login extends Vue {
     }
     // 登录
     private login() {
-        return
+        if (this.check()) {
+            this.$axios
+                .post("/user/login", {
+                    name: this.name,
+                    password: encrypt(this.password)
+                })
+                .then(res => {
+                    if (res.status === this.$OK) {
+                        const user = res.data
+                        if (user) {
+                            // 用户存在 -> 保存会话 -> 退出登录页面
+                            console.log(`用户存在 -> 退出登录页面`)
+                            this.setUserInfo(user)
+                            this.setShowLogin(false)
+                            this.$router.push(this.toPath)
+                        } else {
+                            this.$bus.$emit("toast", "用户不存在或密码错误，请重试！", true)
+                        }
+                    } else {
+                        this.$bus.$emit("toast", `登录失败！`, true)
+                    }
+                });
+        }
+    }
+    // 注册
+    private register() {
+        if (this.check()) {
+            this.$axios
+                .post("/user/register", {
+                    name: this.name,
+                    password: encrypt(this.password)
+                })
+                .then(res => {
+                    if (res.status === this.$OK) {
+                        const user = res.data
+                        // 注册成功 -> 保存会话 -> 退出登录页面
+                        console.log(`注册成功 -> 退出登录页面`)
+                        this.setUserInfo(user)
+                        this.setShowLogin(false)
+                        this.$router.push(this.toPath)
+                    } else {
+                        this.$bus.$emit("toast", `注册失败！`, true)
+                    }
+                });
+        }
+    }
+    // 检查账号、密码
+    private check() {
+        return this.name && this.password;
     }
 }
 </script>
@@ -59,17 +133,6 @@ export default class Login extends Vue {
 .login {
     background: $default-light-color;
     letter-spacing: 1px;
-    .back {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 50;
-        width: 24px;
-        height: 24px;
-        background-image: url("~assets/images/close.png");
-        background-size: contain;
-        transform: rotate(270deg);
-    }
     .logo-wrapper {
         position: relative;
         width: 100%;
@@ -135,9 +198,14 @@ export default class Login extends Vue {
             border: 1px solid #ffffff;
             border-radius: 24px;
             height: 48px;
-            width: 30%;
+            width: 28%;
+            margin: 0 2%;
             line-height: 48px;
             text-align: center;
+            &.disable {
+                color: rgba(255, 255, 255, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
         }
     }
 }

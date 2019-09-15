@@ -1,17 +1,22 @@
+import { State } from './state'
+
 /**
  * 定义所有的获取state中值的入口（getters）
  */
-const getSinger = (state: any) => state.singer
-const getPlaying = (state: any) => state.playing
-const getFullScreen = (state: any) => state.fullScreen
-const getMode = (state: any) => state.mode
-const getSongList = (state: any) => state.songList
-const getSequenceList = (state: any) => state.sequenceList
-const getCurrentIndex = (state: any) => state.currentIndex
-const getCurrentSong = (state: any) => state.songList[state.currentIndex] || {}
-const getRank = (state: any) => state.rank
-const getIsShowList = (state: any) => state.isShowList
-const getLogin = (state: any) => state.login
+const getSinger = (state: State) => state.singer
+const getPlaying = (state: State) => state.playing
+const getFullScreen = (state: State) => state.fullScreen
+const getMode = (state: State) => state.mode
+const getSongList = (state: State) => state.songList
+const getSequenceList = (state: State) => state.sequenceList
+const getCurrentIndex = (state: State) => state.currentIndex
+const getCurrentSong = (state: State) => state.songList[state.currentIndex] || {}
+const getRank = (state: State) => state.rank
+const getIsShowList = (state: State) => state.isShowList
+const getUserInfo = (state: State) => state.userinfo
+const getShowLogin = (state: State) => state.showLogin
+const getTo = (state: State) => state.to
+const getFrom = (state: State) => state.from
 
 export default {
     getSinger,
@@ -24,5 +29,8 @@ export default {
     getCurrentSong,
     getRank,
     getIsShowList,
-    getLogin
+    getUserInfo,
+    getShowLogin,
+    getTo,
+    getFrom,
 }

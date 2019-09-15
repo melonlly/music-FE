@@ -1,3 +1,19 @@
+export interface State {
+    singer: any,
+    playing: boolean,
+    fullScreen: boolean,
+    mode: string,
+    songList: Array<any>,
+    sequenceList: Array<any>,
+    currentIndex: number,
+    rank: any,
+    isShowList: boolean,
+    userinfo: any,
+    showLogin: boolean,
+    to: string,
+    from: string
+}
+
 /**
  * 所有存储的数据（state）
  */
@@ -23,6 +39,12 @@ export default {
     rank: {},
     // 是否正在查看播放列表
     isShowList: false,
+    // 用户信息
+    userinfo: '',
     // 是否显示登录页
-    login: false
+    showLogin: false,
+    // 登录后跳转的路由（默认个人中心页）
+    to: "/user-center",
+    // 登录前的路由
+    from: "",
 }

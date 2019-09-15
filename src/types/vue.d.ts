@@ -8,6 +8,7 @@ declare module "vue/types/vue" {
 		$axios: AxiosInstance,
 		// 非响应式属性挂载点
 		$nRpsPty: any,
+		$bus: Vue
 	}
 }
 

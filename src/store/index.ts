@@ -5,6 +5,7 @@ import actions from './actions'
 import getters from './getters'
 import state from './state'
 import mutations from './mutations'
+import vuexRouter from '@/plugins/vuex-router'
 
 Vue.use(Vuex)
 
@@ -19,5 +20,5 @@ export default new Vuex.Store({
     // 严格模式下，如果state不是由mutation函数修改的，则会抛出异常
     strict: debug,
     // 插件
-    plugins: debug ? [createLogger()] : []
+    plugins: debug ? [vuexRouter(), createLogger()] : [vuexRouter()]
 })

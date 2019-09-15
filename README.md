@@ -1,41 +1,19 @@
 # music-FE
 
-## Project setup
-```
-yarn install
-```
+### melon music FE
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Compiles and minifies for production
-```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Run your end-to-end tests
-```
-yarn run test:e2e
-```
-
-### Run your unit tests
-```
-yarn run test:unit
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-### melon music FE dev
+### fix bug
+- [ ] loading全局化  发送请求时显示loading
+- [x] 根据mid获取歌曲信息（目前所有歌曲都为后台写死同一mid）
+- [ ] 歌手列表页面右侧索引bar不能使用（点击、滑动），需要与左侧歌手列表联动
+- [ ] 滑动退出当前页面（向右滑动）
+- [ ] 歌手详情页、排行详情页无法滚动到底部
+- [ ] 梳理 歌曲播放列表、历史播放列表、播放顺序、歌曲收藏 等歌曲相关的逻辑关系
+- [x] 获取vkey，可能获取不到		无法解决
+- [x] 开始播放后，时间条不变化
+- [x] back按钮处理
+- [ ] 第一次播放正常加载media资源，再选择其他歌曲，不加载了或者页面异常
+- [x] 歌词获取异常
+- [x] 播放页，需要等待歌词和media资源加载完成后，再进行播放（目前有异常）	
+- [ ] cdImg加载异常，超大（第一次播放正常，第二次之后就不正常）
+- [ ] 时间进度条第一次正常，第二次之后就加快了，而且不能暂停

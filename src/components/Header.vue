@@ -3,23 +3,20 @@
         <header>
             <div class="icon"></div>
             <div class="title">Melon Music</div>
-            <div class="sign" @click="setLogin(true)" v-if="!login"></div>
-            <div class="user" v-if="login"></div>
+            <router-link tag="div" linkActiveClass="active" class="sign" to="/user-center"></router-link>
         </header>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Getter, Mutation } from "vuex-class"
 
 @Component({
     name: 'Header',
     components: {},
 })
 export default class Header extends Vue {
-    @Getter("getLogin") login!: boolean
-    @Mutation("SET_LOGIN") setLogin!: (login: boolean) => void
+    
 }
 </script>
 
@@ -50,16 +47,6 @@ export default class Header extends Vue {
             background-repeat: no-repeat;
             background-position: center;
             background-image: url("~assets/images/login.png");
-        }
-        .user {
-            position: absolute;
-            right: 10px;
-            width: 36px;
-            height: 36px;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-image: url("~assets/images/user.png");
         }
     }
 }

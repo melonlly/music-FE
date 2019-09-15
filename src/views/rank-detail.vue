@@ -1,6 +1,6 @@
 <template>
     <div class="rank-detail" ref="detail">
-        <div class="back" @click="_back"></div>
+        <back @back="_back"></back>
         <div class="title">{{ title }}</div>
         <div class="bg-image" :style="bgStyle" ref="bgImage">
             <div class="filter" ref="filter"></div>
@@ -48,6 +48,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import Loading from "@/components/Loading.vue";
 import Scroller from "@/components/Scroller.vue";
+import Back from "@/components/Back.vue";
 import { transform, filter } from "@/utils/constants";
 import { Getter, Action } from "vuex-class";
 
@@ -57,7 +58,8 @@ const minHeaderHeight = 40; // 最小标题高度
     name: "RankDetail",
     components: {
         Loading,
-        Scroller
+        Scroller,
+        Back
     }
 })
 export default class RankDetail extends Vue {
@@ -229,14 +231,10 @@ export default class RankDetail extends Vue {
     right: 0;
     background: $background-color;
     .back {
-        position: absolute;
-        z-index: 50;
-        top: 10px;
-        left: 10px;
         width: 32px;
         height: 32px;
         @include bg-image("~assets/images/back");
-        background-size: cover;
+        transform: rotate(0);
     }
     .title {
         position: absolute;

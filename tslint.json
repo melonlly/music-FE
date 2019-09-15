@@ -21,7 +21,7 @@
     "member-ordering": false,
     "prefer-for-of": false,
     "max-line-length": false,
-    "no-console": [true, "log"],
+    "no-console": [false, "log"],
     "no-unused-expression": [true, "allow-fast-null-checks"],
     "comment-format": [true, "check-space"],
     "indent": [false, "spaces", 4],

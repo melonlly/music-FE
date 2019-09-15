@@ -1,6 +1,6 @@
 <template>
     <div class="singer-detail" ref="detail">
-        <div class="back" @click="_back"></div>
+        <back @back="_back"></back>
         <div class="title">{{ singer.singer_name }}</div>
         <div class="bg-image" :style="bgStyle" ref="bgImage">
             <div class="play-wrapper" v-show="false">
@@ -45,6 +45,7 @@ import Loading from "@/components/Loading.vue";
 import { getSingerPic } from "@/utils/utils";
 import { transform, filter } from "@/utils/constants";
 import { Getter, Action } from "vuex-class";
+import Back from "@/components/Back.vue"
 
 const minHeaderHeight = 40; // 最小标题高度
 
@@ -52,7 +53,8 @@ const minHeaderHeight = 40; // 最小标题高度
     name: "SingerDetail",
     components: {
         Loading,
-        Scroller
+        Scroller,
+        Back
     }
 })
 export default class SingerDetail extends Vue {
@@ -168,14 +170,10 @@ export default class SingerDetail extends Vue {
     right: 0;
     background: $background-color;
     .back {
-        position: absolute;
-        z-index: 50;
-        top: 10px;
-        left: 10px;
         width: 32px;
         height: 32px;
         @include bg-image("~assets/images/back");
-        background-size: cover;
+        transform: rotate(0);
     }
     .title {
         position: absolute;

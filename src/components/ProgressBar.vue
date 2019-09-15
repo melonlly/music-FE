@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { transform } from "@/utils/constants";
 
 @Component({
@@ -29,6 +29,17 @@ export default class ProgressBar extends Vue {
     created() {
         this.$nRpsPty.touch = {}; // 当前触摸点的信息
         this.$nRpsPty.barWidth = 0; // 进度条长度
+    }
+
+    @Watch("percent")
+    private onPercent(newPercent: number) {
+        const barWidth = (this.$refs.progress_bar as HTMLElement).clientWidth // 当进度条隐藏时，clientWidth获取的宽度为0
+        if (barWidth > 0 && this.$nRpsPty.barWidth !== barWidth) {
+            this.$nRpsPty.barWidth = barWidth
+        }
+        if (newPercent > 0) {
+            this._offsetProgress(newPercent * this.$nRpsPty.barWidth)
+        }
     }
 
     private progressTouchStart(e: any) {

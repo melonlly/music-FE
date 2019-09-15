@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
     routes: [
         {
             name: 'root',
@@ -43,5 +43,15 @@ export default new Router({
             path: '/search',
             component: () => import(/* webpackChunkName: "search" */ '@/views/search.vue'),
         },
+        {
+            name: 'user-center',
+            path: '/user-center',
+            component: () => import(/* webpackChunkName: "user" */ '@/views/user-center.vue'),
+            meta: {
+                requiresAuth: true
+            }
+        },
     ],
 })
+
+export default router

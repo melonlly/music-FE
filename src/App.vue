@@ -7,10 +7,11 @@
         </keep-alive>
         <player></player>
         <transition name="login">
-            <login v-if="login"></login>
+            <login v-show="showLogin"></login>
         </transition>
         <m-footer v-show="currentSong.id && !fullScreen"></m-footer>
         <m-svg></m-svg>
+        <toast :msg="toastMsg" :show="toastShow"></toast>
 
         <transition>
             <sequence-list></sequence-list>
@@ -26,6 +27,7 @@ import MNav from "@/components/Nav.vue";
 import Player from "@/components/Player.vue";
 import MSvg from "@/components/Svg.vue";
 import SequenceList from "@/components/SequenceList.vue";
+import Toast from "@/components/Toast.vue";
 import Login from "@/views/login.vue";
 import { Getter, Mutation } from "vuex-class";
 import { isContain } from "@/utils/dom"
@@ -39,17 +41,33 @@ import { isContain } from "@/utils/dom"
         Player,
         SequenceList,
         MSvg,
-        Login
+        Login,
+        Toast
     }
 })
 export default class App extends Vue {
-    @Getter("getLogin") login!: boolean;
     @Getter("getIsShowList") isShowList!: boolean;
     @Getter("getCurrentSong") currentSong!: any;
     @Getter("getFullScreen") fullScreen!: boolean;
+    @Getter("getShowLogin") showLogin!: boolean;
     @Mutation("SET_ISSHOWLIST") setIsShowList!: (isShowList: boolean) => void;
 
+    private toastMsg: string = ""
+    private toastShow: boolean = false
+
+    created() {
+        this.$bus.$on("toast", (msg: string, show: boolean) => {
+            this.toastMsg = msg
+            this.toastShow = show
+        })
+    }
+
     private get getContentH() {
+        if (this.$route.name === "user-center") {
+            return {
+                height: "100%"
+            }
+        }
         if (this.currentSong.id && !this.fullScreen) {
             return {
                 height: "74.5%"

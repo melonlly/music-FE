@@ -1,3 +1,11 @@
+import CryptoJS from "crypto-js"
+import config from "../config"
+
+// 加密
+const encrypt = (msg: string) => CryptoJS.AES.encrypt(msg, config.key).toString()
+// 解密
+const decrypt = (ciphertext: string) => CryptoJS.AES.decrypt(ciphertext, config.key).toString(CryptoJS.enc.Utf8)
+
 // 格式化数字（万）
 const formatNum = (num: number) => {
     let formatStr = ''
@@ -64,6 +72,8 @@ const removeItem = (arr: Array<any>, key: string, value: string) => {
 }
 
 export {
+    encrypt,
+    decrypt,
     formatNum,
     formatTime,
     shuffle,

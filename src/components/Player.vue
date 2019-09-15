@@ -4,7 +4,7 @@
             <div class="base-player" v-show="fullScreen" ref="player">
                 <div class="bg" :style="albumBgStyle"></div>
                 <header>
-                    <i class="back" @click="setFullScreen(false)"></i>
+                    <back @back="setFullScreen(false)"></back>
                     <div class="title">{{ currentSong.name }}</div>
                     <div class="name">{{ currentSong.singer_name }}</div>
                 </header>
@@ -84,7 +84,7 @@
             </div>
         </transition>
 
-        <audio ref="audio" :src="currentSong.url" @play="ready" @error="error"></audio>
+        <audio ref="audio" @canplay="ready" @error="error"></audio>
     </div>
 </template>
 
@@ -97,6 +97,7 @@ import ProgressBar from "@/components/ProgressBar.vue";
 import Slide from "@/components/Slide.vue";
 import Scroller from "@/components/Scroller.vue";
 import PlayerMixin from "@/components/PlayerMixin";
+import Back from "@/components/Back.vue"
 import { mixins } from "vue-class-component";
 
 @Component({
@@ -104,7 +105,8 @@ import { mixins } from "vue-class-component";
     components: {
         ProgressBar,
         Slide,
-        Scroller
+        Scroller,
+        Back
     }
 })
 export default class Player extends mixins(PlayerMixin) {
@@ -122,6 +124,10 @@ export default class Player extends mixins(PlayerMixin) {
     sections: Array<any> = [];
     // 当前播放到哪一句
     lineIndex: number = 0;
+
+    created() {
+        this.$nRpsPty.hasLyric = false // 歌词是否加载完毕
+    }
 
     @Watch("currentSong")
     onCurrentSongChange(newSong: any, oldSong: any) {
@@ -141,8 +147,9 @@ export default class Player extends mixins(PlayerMixin) {
             (this.$refs.plate as HTMLElement).style.height = `${playerWidth * 0.8}px`;
             (this.$refs.slide as HTMLElement).style.height = `${playerWidth * 0.8}px`;
 
+            // TODO 歌词和media加载完毕才能播放
             this.formatLyrics();
-            this.play();
+            this.getMediaUrl();
         });
     }
     // 当前时间 -> 当前行
@@ -231,10 +238,18 @@ export default class Player extends mixins(PlayerMixin) {
     // 音频加载完成
     private ready() {
         this.songReady = true;
+        console.log(`this.$nRpsPty.hasLyric = ${ this.$nRpsPty.hasLyric }`)
+        if (this.$nRpsPty.hasLyric) {
+            this.play()
+        }
     }
     // 音频加载异常
     private error() {
         this.songReady = true;
+        console.log(`this.$nRpsPty.hasLyric = ${ this.$nRpsPty.hasLyric }`)
+        if (this.$nRpsPty.hasLyric) {
+            this.play()
+        }
     }
     // 切换模式
     private switchMode() {
@@ -363,32 +378,67 @@ export default class Player extends mixins(PlayerMixin) {
         this.setCurrentIndex(index);
         (this.$refs.slider as Slide).goToPage(index, 0, 400);
     }
+    // 获取media地址
+    private getMediaUrl() {
+        this.$axios.post(`/song/media/`, {
+            mid: this.currentSong.mid,
+            mediamid: this.currentSong.mediamid
+        }).then(res => {
+            if (res.status === this.$OK) {
+                (this.$refs.audio as any).src = res.data.media
+            }
+        })
+    }
     // 格式化歌词
     private formatLyrics() {
         let rows: string[] = []; // 行
         const lines: string[] = []; // 歌词列表
         const sections: number[] = []; // 歌词区间
-        if (this.currentSong.lyrics) {
-            const div = document.createElement("div");
-            div.innerHTML = this.currentSong.lyrics;
-            rows = div.innerHTML.split("\n");
-            rows.forEach((row, index) => {
-                const parts = row.split("]");
-                const time = parts[0].replace("[", "");
-                const line = parts[1];
-                // 00:00.0
-                if (new RegExp(/^(\d{2}):(\d{2}).(\d{2})$/).test(time)) {
-                    const minutes = parseInt(time.split(":")[0], 10);
-                    const seconds = parseFloat(time.split(":")[1]);
-                    sections.push(minutes * 60 + seconds);
-                    lines.push(line);
+        let lyric = ""; // 歌词
+        const song = this.currentSong
+        lyric = song.lyrics
+
+        const format = (lyrics: string) => {
+            if (lyrics) {
+                const div = document.createElement("div");
+                div.innerHTML = lyrics;
+                rows = div.innerHTML.split("\n");
+                rows.forEach((row, index) => {
+                    const parts = row.split("]");
+                    const time = parts[0].replace("[", "");
+                    const line = parts[1];
+                    // 00:00.0
+                    if (new RegExp(/^(\d{2}):(\d{2}).(\d{2})$/).test(time)) {
+                        const minutes = parseInt(time.split(":")[0], 10);
+                        const seconds = parseFloat(time.split(":")[1]);
+                        sections.push(minutes * 60 + seconds);
+                        lines.push(line);
+                    }
+                });
+            } else {
+                lines.push("暂无歌词");
+            }
+            this.lines = lines;
+            this.sections = sections;
+
+            this.$nRpsPty.hasLyric = true // 歌词加载完毕
+            console.log(`this.songReady = ${ this.songReady }`)
+            if (this.songReady) {
+                this.play()
+            }
+        }
+
+        // 判断歌词是否存在 -> 不存在则通过接口获取
+        if (!lyric) {
+            this.$axios.get(`/song/lyrics/${song.id}`).then(res => {
+                if (res.status === this.$OK) {
+                    format(res.data.lyric)
                 }
             });
         } else {
-            lines.push("暂无歌词");
+            format(lyric)
         }
-        this.lines = lines;
-        this.sections = sections;
+        
     }
     // 获取图片地址
     private getSongBgImgURL(mid: string) {
@@ -496,15 +546,10 @@ export default class Player extends mixins(PlayerMixin) {
             font-size: $font-size-L;
             color: #ffffff;
             .back {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                z-index: 50;
                 width: 32px;
                 height: 32px;
                 @include bg-image("~assets/images/back");
-                background-size: contain;
-                transform: rotate(270deg);
+                transform: rotate(0);
             }
             .title {
                 position: absolute;

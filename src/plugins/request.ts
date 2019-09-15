@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, CancelTokenStatic, Canceler, MAxiosRequestConfig } from 'axios';
 import Vue from 'vue'
+import Bus from "@/components/Bus.vue";
 
 /* 防止重复提交，利用axios的cancelToken
    如需允许多个提交同时发出。则需要在请求配置config中增加 neverCancel 属性，并设置为true
@@ -42,7 +43,7 @@ const getService = (options: any) => {
     service.interceptors.request.use(
         (reqConfig: MAxiosRequestConfig) => {
             // neverCancel配置项，允许多个请求
-            if (!reqConfig.neverCancel) {
+            if (reqConfig.neverCancel) {
                 // 生成cancelToken
                 reqConfig.cancelToken = new CancelToken((cancel: Canceler) => {
                     removePending(reqConfig, cancel)
@@ -75,9 +76,13 @@ const getService = (options: any) => {
     return service
 }
 
+// 事件bus
+const bus = new Bus()
+
 export default {
     install(V: typeof Vue, options: any) {
         V.prototype.$axios = getService(options)
         V.prototype.$OK = 0
+        V.prototype.$bus = bus
     },
 }
