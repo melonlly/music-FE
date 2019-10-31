@@ -1,19 +1,15 @@
 <template>
     <div class="listener">
-        {{ $nRpsPty.format(num) }}
+        {{ num | formatNum }}
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { formatNum } from '@/utils/utils'
 
 @Component({
     name: "Listener",
     components: {},
-    created() {
-        this.$nRpsPty.format = formatNum
-    }
 })
 export default class Listener extends Vue {
     @Prop({

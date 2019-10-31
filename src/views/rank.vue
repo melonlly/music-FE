@@ -37,6 +37,7 @@ import { Getter, Mutation } from "vuex-class";
 import Listener from "@/components/Listener.vue";
 import Scroller from "@/components/Scroller.vue";
 import Loading from "@/components/Loading.vue";
+import { goto } from '../utils/utils';
 
 @Component({
     name: "Rank",
@@ -72,9 +73,9 @@ export default class Rank extends Vue {
     // 选择一个排行榜
     private selectRank(rank: any) {
         // 跳转排行榜详情页
-        this.$router.push({
+        goto(this.$router, {
             path: `/rank/${rank.id}`
-        });
+        })
         // 保存当前排行榜信息
         this.setRank(rank);
     }

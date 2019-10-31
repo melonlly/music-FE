@@ -59,7 +59,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import Scroller from "@/components/Scroller.vue";
 import Loading from "@/components/Loading.vue";
-import { getSingerPic } from "@/utils/utils";
+import { getSingerPic, goto } from "@/utils/utils";
 import { getData } from "@/utils/dom";
 import { Getter, Mutation } from "vuex-class"
 
@@ -161,10 +161,12 @@ export default class SingerList extends Vue {
     }
 
     private selectSinger(singer: any) {
-        // 跳转歌手详情页
-        this.$router.push({
-            path: `/singer/${singer.singer_mid}`
-        });
+        // 跳转歌手详情页（判断路由是否相同，解决 路由重复 NavigationDuplicated 问题）
+        if (this.$route.path !== `/singer/${singer.singer_mid}`) {
+            goto(this.$router, {
+                path: `/singer/${singer.singer_mid}`
+            })
+        }
         // 保存当前歌手信息
         this.setSinger(singer);
     }

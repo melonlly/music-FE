@@ -20,21 +20,21 @@ interface FastClickObject {
 	getTargetElementFromEventTarget(eventTarget: EventTarget): any;
 	needsClick(target: any /* EventTarget | Element */): boolean;
 	needsFocus(target: any /* EventTarget | Element */): boolean;
-  }
-  
-  interface FastClickOptions {
-	  touchBoundary?: number;
-	  tapDelay?: number;
-  }
-  
-  interface FastClickStatic {
-	  new(layer: any, options?: FastClickOptions): FastClickObject;
-	  attach(layer: any, options?: FastClickOptions): FastClickObject;
-  }
-  
-  declare module "fastclick" {
-	  var FastClick: FastClickStatic;
-	  export = FastClick;
-  }
-  
-  declare var FastClick: FastClickStatic;
+}
+
+interface FastClickOptions {
+	touchBoundary?: number;
+	tapDelay?: number;
+}
+
+interface FastClickStatic {
+	new(layer: any, options?: FastClickOptions): FastClickObject;
+	attach(layer: any, options?: FastClickOptions): FastClickObject;
+}
+
+declare module "fastclick" {
+	var FastClick: FastClickStatic;
+	export = FastClick;
+}
+
+declare var FastClick: FastClickStatic;

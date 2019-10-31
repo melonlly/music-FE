@@ -1,5 +1,6 @@
 import CryptoJS from "crypto-js"
 import config from "../config"
+import VueRouter, { RawLocation } from 'vue-router'
 
 // 加密
 const encrypt = (msg: string) => CryptoJS.AES.encrypt(msg, config.key).toString()
@@ -71,6 +72,18 @@ const removeItem = (arr: Array<any>, key: string, value: string) => {
     }
 }
 
+// 路由跳转函数（处理了返回的Promise）
+const goto = (router: VueRouter, location: RawLocation) => {
+    const routerPromise = router.push(location)
+    if (routerPromise) {
+        routerPromise.then(res => {
+            console.log(res)
+        }).catch(err => {
+            console.error(`路由异常：${ err }`)
+        })
+    }
+}
+
 export {
     encrypt,
     decrypt,
@@ -84,4 +97,5 @@ export {
     getZhidaPic2,
     getZhidaPic3,
     removeItem,
+    goto,
 }

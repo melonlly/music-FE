@@ -1,25 +1,36 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "strict": true,
+    "baseUrl": ".", // 根目录
+    "target": "esnext", // js版本
+    "module": "esnext", // 模块系统版本
+    "strict": true, // 是否严格模式
     "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
+    "importHelpers": true,//从 tslib 导入辅助工具函数
+    "moduleResolution": "node",//如何解析模块
+    "experimentalDecorators": true,//启用装饰器
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "baseUrl": ".",
+    "noImplicitAny": false,//在表达式和声明上有隐含的 any类型时报错
+    "strictPropertyInitialization": false,//所有属性都需要被赋值
+    "allowSyntheticDefaultImports": true,//允许从没有设置默认导出的模块中默认导入
+    "sourceMap": true,//生成sourcemap
+    "strictNullChecks": true,//启用严格null检查
+    "noUnusedLocals": false,//未使用的变量
+    "noUnusedParameters": true,//未使用的参数
+    "allowJs": false,//允许编译 javascript 文件
     "types": [
       "webpack-env",
       "jest"
     ],
+    // 模块名或路径映射的列表
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "moduleA": [
+        "src/libs/moduleA"
       ]
     },
+    // 全局库
     "lib": [
       "esnext",
       "dom",
@@ -27,6 +38,7 @@
       "scripthost"
     ]
   },
+  // 需要编译的目录
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
@@ -34,6 +46,7 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
+  // 排除的目录
   "exclude": [
     "node_modules"
   ]

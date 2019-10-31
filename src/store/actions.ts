@@ -5,55 +5,41 @@
 
 import { 
     SET_SEQUENCELIST,
-    SET_SONGLIST,
     SET_PLAYING,
     SET_FULLSCREEN,
     SET_CURRENTINDEX
  } from './mutation-types'
-import { shuffle, getIndex } from '../utils/utils'
-import { MODE } from '../utils/constants'
 
 export default {
 	/**
      * 选择歌曲开始播放
-     *  1.设置歌曲列表和歌曲播放队列（列表为全集，队列会根据播放模式而改变）
+     *  1.将当前歌曲添加至播放队列（若已存在，则不添加），设置当前播放歌曲在播放队列中的位置
      *  2.设置播放状态
      *  3.设置是否全屏
-     *  4.设置当前播放歌曲在播放队列中的位置
      */
-	selectSong({commit, state}: any, {list, index}: any) {
-        let sequenceList = []
+	selectSong({commit, state}: any, {song}: any) {
         // 1
-        commit(SET_SONGLIST, list)
-        switch (state.mode) {
-            // 列表循环
-            case MODE.ORDER: {
-                sequenceList = list
-                break
-            }
-            // 单曲循环
-            case MODE.SINGLE: {
-                sequenceList = list
-                break
-            }
-            // 随机播放
-            case MODE.RANDOM: {
-                const randomList = shuffle(list)
-                index = getIndex(randomList, list[index])
-                sequenceList = randomList
-                break
-            }
-            default: {
-                sequenceList = list
+        const sequenceList = state.sequenceList.slice()
+        let index = 0
+        for (let i = 0; i < sequenceList.length; i++) {
+            const seq = sequenceList[i];
+            if (seq.songid === song.songid) {
+                index = i
                 break
             }
         }
-        commit(SET_SEQUENCELIST, sequenceList)
+        if (index === 0) {
+            // 未找到匹配歌曲
+            sequenceList.push(song)
+            commit(SET_SEQUENCELIST, sequenceList)
+            index = sequenceList.length - 1
+        }
+        // console.log(`当前index -> ${ index }`)
+        // console.log(sequenceList)
+        commit(SET_CURRENTINDEX, index)
         // 2
         commit(SET_PLAYING, true)
         // 3
         commit(SET_FULLSCREEN, true)
-        // 4
-        commit(SET_CURRENTINDEX, index)
     }
 }

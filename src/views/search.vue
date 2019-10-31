@@ -4,6 +4,7 @@
             <div class="search-box" ref="searchBox">
                 <form action @submit.prevent>
                     <input
+                        v-focus
                         type="search"
                         autocomplete="off"
                         autocorrect="off"
@@ -56,6 +57,7 @@
                     :pullUpLoad="true"
                     @onpullingUp="loadPage"
                     ref="resultScroller"
+                    :dataList="songs"
                 >
                     <div class="zhida" v-if="zhida && zhida.type !== 0" @click="zhidaDetail">
                         <span class="avatar">
@@ -100,7 +102,8 @@ import {
     removeItem,
     getRandomItem,
     getZhidaPic2,
-    getZhidaPic3
+    getZhidaPic3,
+    goto
 } from "@/utils/utils";
 import Scroller from "@/components/Scroller.vue";
 import { Getter, Mutation, Action } from "vuex-class";
@@ -219,7 +222,7 @@ export default class Search extends Vue {
         this.text = text || "";
         (this.$refs.input as any).value = this.text;
         this.$axios
-            .get(`/search`, {
+            .get(`/search/searchList`, {
                 params: {
                     key: text,
                     page: this.page
@@ -284,9 +287,9 @@ export default class Search extends Vue {
         // 歌手
         if (zhida && zhida.type === 2) {
             // 跳转歌手详情页
-            this.$router.push({
+            goto(this.$router, {
                 path: `/singer/${zhida.singermid}`
-            });
+            })
             // 保存当前歌手信息
             this.setSinger({
                 singer_mid: zhida.singermid,
@@ -298,10 +301,7 @@ export default class Search extends Vue {
     }
     // 选择歌曲
     private select(song: any, index: number) {
-        this.selectSong({
-            list: [song],
-            index: 0
-        });
+        this.selectSong({ song });
     }
     // 获取热门搜索
     private _getHotKeys() {

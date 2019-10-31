@@ -3,7 +3,6 @@ export interface State {
     playing: boolean,
     fullScreen: boolean,
     mode: string,
-    songList: Array<any>,
     sequenceList: Array<any>,
     currentIndex: number,
     rank: any,
@@ -29,8 +28,6 @@ export default {
     fullScreen: false,
     // 播放模式（列表循环：0，单曲循环：1，随机播放：2）
     mode: config.mode,
-    // 歌单列表
-    songList: [],
     // 播放队列
     sequenceList: [],
     // 当前播放在队列中的位置

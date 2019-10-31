@@ -30,6 +30,11 @@ import { addClass } from "@/utils/dom";
 })
 export default class Slide extends Vue {
     @Prop({
+        required: true,
+        default: () => []
+	})
+	private readonly dataList?: Array<any> // 数据组
+    @Prop({
         default: true
     })
     private readonly loop?: boolean // 是否循环
@@ -150,8 +155,12 @@ export default class Slide extends Vue {
     // 初始化Slide的宽度
     private setSlideWidth(isResize?: boolean) {
         this.$nRpsPty.childs = (this.$refs.slideGroup as Element).children;
+        
+        console.log(this.$nRpsPty.childs)
+
         let width = 0;
         const slideWidth = (this.$refs.slide as Element).clientWidth;
+
         for (let i = 0; i < this.$nRpsPty.childs.length; i++) {
             const child = this.$nRpsPty.childs[i] as HTMLElement;
             addClass(child, "slide-item");
@@ -214,6 +223,12 @@ export default class Slide extends Vue {
     }
 
     /* 监听事件 */
+    @Watch('dataList')
+    onDataListChange() {
+        setTimeout(() => {
+            this.refresh()
+        }, 20)
+    }
     @Watch("loop")
     onLoop() {
         this.update();

@@ -10,7 +10,6 @@ export default class PlayerMixin extends Vue {
 	@Getter("getSinger") singer!: any
 	@Getter("getFullScreen") fullScreen!: boolean
 	@Getter("getMode") mode!: string
-	@Getter("getSongList") songList!: Array<any>
 	@Getter("getSequenceList") sequenceList!: Array<any>
 	@Getter("getCurrentIndex") currentIndex!: number
 	@Getter("getCurrentSong") currentSong!: any

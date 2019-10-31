@@ -1,6 +1,7 @@
 import axios, { AxiosResponse, CancelTokenStatic, Canceler, MAxiosRequestConfig } from 'axios';
 import Vue from 'vue'
 import Bus from "@/components/Bus.vue";
+import echarts from "echarts";
 
 /* 防止重复提交，利用axios的cancelToken
    如需允许多个提交同时发出。则需要在请求配置config中增加 neverCancel 属性，并设置为true
@@ -35,7 +36,7 @@ const getService = (options: any) => {
             'Content-Type': 'application/json',
         },
         timeout: 60000,
-         // 服务器响应的数据类型，可以是 'arraybuffer', 'blob', 'document', 'json', 'text', 'stream'
+        // 服务器响应的数据类型，可以是 'arraybuffer', 'blob', 'document', 'json', 'text', 'stream'
         responseType: 'json',
     })
 
@@ -84,5 +85,48 @@ export default {
         V.prototype.$axios = getService(options)
         V.prototype.$OK = 0
         V.prototype.$bus = bus
+        V.prototype.$echarts = echarts
+
+        // 聚焦输入框的指令
+        V.directive("focus", {
+            // 当被绑定的元素插入到 DOM 中时
+            inserted: (el: HTMLElement) => {
+                el.focus()
+            },
+            // 指令所在组件的 VNode 及其子 VNode 全部更新后调用
+            // componentUpdated: (el: HTMLElement) => {
+            //     console.log(el)
+            //     el.focus()
+            // },
+        })
+
+        // 格式化数字过滤器
+        V.filter('formatNum', (num: number, payload: {}) => {
+            let formatStr = ''
+            if (num === 0) {
+                formatStr = '0'
+            } else if (num) {
+                const result = num / 10000
+                if (result >= 1) {
+                    formatStr = Math.floor(result).toFixed(1) + '万'
+                } else {
+                    formatStr = num + ''
+                }
+            } else {
+                formatStr = '--'
+            }
+            return formatStr
+        })
+        // 格式化时间过滤器
+        V.filter('formatTime', (seconds: number, payload: {}) => {
+            if (seconds && seconds > 0) {
+                const minute = Math.floor(seconds / 60)
+                const second = seconds % 60
+                return `${minute}:${second < 10 ? '0' + second : second}`
+            } else {
+                return '0:00'
+            }
+        })
+
     },
 }

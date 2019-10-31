@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { AxiosInstance } from 'axios';
+import { ECharts } from 'echarts';
 
 declare module "vue/types/vue" {
 	interface Vue {
@@ -8,7 +9,19 @@ declare module "vue/types/vue" {
 		$axios: AxiosInstance,
 		// 非响应式属性挂载点
 		$nRpsPty: any,
-		$bus: Vue
+		$bus: Vue,
+		$echarts: {
+			init: (
+				dom: HTMLDivElement | HTMLCanvasElement,
+				theme?: object | string,
+				opts?: {
+					devicePixelRatio?: number
+					renderer?: string
+					width?: number | string
+					height?: number | string
+				}
+			) => ECharts
+		},
 	}
 }
 

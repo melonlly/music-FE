@@ -17,6 +17,7 @@
                         <div class="slide-wrapper" ref="slide">
                             <slide
                                 v-if="sequenceList.length"
+                                :dataList="sequenceList"
                                 :showDot="false"
                                 :autoPlay="false"
                                 :curIndex="currentIndex"
@@ -26,7 +27,7 @@
                                 @touchEnd="onSlideTouchEnd"
                                 ref="slider"
                             >
-                                <div v-for="song in sequenceList" :key="song.id" class="cd">
+                                <div v-for="song in sequenceList" :key="song.songid" class="cd">
                                     <div
                                         class="cdImg"
                                         :style="getSongBgImgURL(song.album.mid)"
@@ -51,11 +52,11 @@
                 </div>
                 <div class="operate">
                     <div class="player">
-                        <div class="start">{{ _formatTime(time) }}</div>
+                        <div class="start">{{ time | formatTime }}</div>
                         <div class="progress-bar-wrapper">
                             <progress-bar :percent="percent" @percent="onPercentChange"></progress-bar>
                         </div>
-                        <div class="end">{{ _formatTime(currentSong.interval) }}</div>
+                        <div class="end">{{ currentSong.interval | formatTime }}</div>
                     </div>
                     <div class="btns">
                         <i :class="getModeCls" @click="switchMode"></i>
@@ -90,7 +91,7 @@
 
 <script lang="ts">
 import { Component, Watch } from "vue-property-decorator";
-import { getAlbumPic, formatTime } from "@/utils/utils";
+import { getAlbumPic } from "@/utils/utils";
 import { addClass, removeClass } from "@/utils/dom";
 import { MODE } from "@/utils/constants";
 import ProgressBar from "@/components/ProgressBar.vue";
@@ -115,7 +116,7 @@ export default class Player extends mixins(PlayerMixin) {
     // 当前时间
     time: number = 0;
     // 定时器
-    timer: number = 0;
+    timer?: number;
     // 是否正在查看歌词
     lyrics: boolean = false;
     // 歌词列表
@@ -125,29 +126,30 @@ export default class Player extends mixins(PlayerMixin) {
     // 当前播放到哪一句
     lineIndex: number = 0;
 
-    created() {
-        this.$nRpsPty.hasLyric = false // 歌词是否加载完毕
-    }
-
     @Watch("currentSong")
     onCurrentSongChange(newSong: any, oldSong: any) {
-        clearInterval(this.timer);
-        this.timer = 0;
-        (this.$refs.audio as any).pause();
-        (this.$refs.audio as any).currentTime = 0;
-        this.songReady = false;
-        this.time = 0;
-
-        const albumPic = getAlbumPic(this.currentSong.album.mid);
-        // this.$refs.bgImg.setAttribute('src', album_pic)
-        // this.$refs.cdImg.setAttribute('src', album_pic)
-        (this.$refs.miniCDimg as HTMLElement).setAttribute("src", albumPic);
         this.$nextTick(() => {
+            // 每次选择歌曲会改变 sequenceList ，进而改变 this.$refs.CD ，因此需要dom挂载完毕，再进行操作
+            if (this.timer) {
+                this.paused()
+                this.timer = undefined
+            }
+            (this.$refs.audio as any).currentTime = 0;
+            this.time = 0;
+            this.resetResource()
+
+            console.log(`song changed`)
+
+            const albumPic = getAlbumPic(this.currentSong.album.mid);
+            // this.$refs.bgImg.setAttribute('src', album_pic)
+            // this.$refs.cdImg.setAttribute('src', album_pic)
+            (this.$refs.miniCDimg as HTMLElement).setAttribute("src", albumPic);
+
             const playerWidth = (this.$refs.player as HTMLElement).clientWidth;
             (this.$refs.plate as HTMLElement).style.height = `${playerWidth * 0.8}px`;
             (this.$refs.slide as HTMLElement).style.height = `${playerWidth * 0.8}px`;
 
-            // TODO 歌词和media加载完毕才能播放
+            // 歌词和media加载完毕才能播放
             this.formatLyrics();
             this.getMediaUrl();
         });
@@ -183,6 +185,13 @@ export default class Player extends mixins(PlayerMixin) {
             false,
             true
         );
+    }
+
+    // 重置歌词和media资源
+    private resetResource() {
+        this.songReady = false; // media资源重置为未就绪
+        this.$nRpsPty.hasLyric = false; // 歌词重置为未就绪
+        this.$nRpsPty.newSrc = false // 是否新audio资源
     }
 
     // 获取专辑背景图片
@@ -223,9 +232,6 @@ export default class Player extends mixins(PlayerMixin) {
         return clsName;
     }
 
-    private _formatTime(time: number) {
-        return formatTime(time);
-    }
     // 设置是否全屏
     private _fullScreen(full: boolean) {
         this.lyrics = false;
@@ -235,20 +241,24 @@ export default class Player extends mixins(PlayerMixin) {
     private showLyrics() {
         this.lyrics = !this.lyrics;
     }
-    // 音频加载完成
+    // 音频加载完成（切歌时会触发上一首的ready事件）
     private ready() {
-        this.songReady = true;
-        console.log(`this.$nRpsPty.hasLyric = ${ this.$nRpsPty.hasLyric }`)
-        if (this.$nRpsPty.hasLyric) {
-            this.play()
+        if (this.$nRpsPty.newSrc) {
+            this.songReady = true;
+            // console.log(`ready -> this.$nRpsPty.hasLyric = ${ this.$nRpsPty.hasLyric }`)
+            if (this.$nRpsPty.hasLyric) {
+                this.play()
+            }
         }
     }
     // 音频加载异常
     private error() {
-        this.songReady = true;
-        console.log(`this.$nRpsPty.hasLyric = ${ this.$nRpsPty.hasLyric }`)
-        if (this.$nRpsPty.hasLyric) {
-            this.play()
+        if (this.$nRpsPty.newSrc) {
+            this.songReady = true;
+            // console.log(`error -> this.$nRpsPty.hasLyric = ${ this.$nRpsPty.hasLyric }`)
+            if (this.$nRpsPty.hasLyric) {
+                this.play()
+            }
         }
     }
     // 切换模式
@@ -324,7 +334,16 @@ export default class Player extends mixins(PlayerMixin) {
         addClass(bar, "on");
 
         this.timer = setInterval(this._play, 1000);
-        (this.$refs.audio as any).play();
+        const audioPromise = (this.$refs.audio as any).play();
+        if (audioPromise) {
+            audioPromise
+                .then((res: any) => {
+                    console.log(`audio加载成功：${ res }`)
+                })
+                .catch((err: any) => {
+                    console.error(`audio加载失败：${ err }`)
+                })
+        }
     }
     // 暂停
     private paused() {
@@ -381,11 +400,12 @@ export default class Player extends mixins(PlayerMixin) {
     // 获取media地址
     private getMediaUrl() {
         this.$axios.post(`/song/media/`, {
-            mid: this.currentSong.mid,
+            mid: this.currentSong.songmid,
             mediamid: this.currentSong.mediamid
         }).then(res => {
             if (res.status === this.$OK) {
                 (this.$refs.audio as any).src = res.data.media
+                this.$nRpsPty.newSrc = true;
             }
         })
     }
@@ -422,7 +442,7 @@ export default class Player extends mixins(PlayerMixin) {
             this.sections = sections;
 
             this.$nRpsPty.hasLyric = true // 歌词加载完毕
-            console.log(`this.songReady = ${ this.songReady }`)
+            // console.log(`this.songReady = ${ this.songReady }`)
             if (this.songReady) {
                 this.play()
             }
@@ -430,7 +450,7 @@ export default class Player extends mixins(PlayerMixin) {
 
         // 判断歌词是否存在 -> 不存在则通过接口获取
         if (!lyric) {
-            this.$axios.get(`/song/lyrics/${song.id}`).then(res => {
+            this.$axios.get(`/song/lyrics/${song.songid}`).then(res => {
                 if (res.status === this.$OK) {
                     format(res.data.lyric)
                 }

@@ -2,7 +2,7 @@
     <div class="recommend">
         <scroller ref="content" v-if="hots.length" :dataList="hots">
             <div class="recommend-slider">
-                <slide v-if="recommends.length">
+                <slide v-if="recommends.length" :dataList="recommends">
                     <div v-for="item in recommends" :key="item.id">
                         <a :href="item.linkUrl">
                             <img :src="item.picUrl" @load="loadImg" />

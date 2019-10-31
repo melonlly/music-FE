@@ -151,10 +151,7 @@ export default class SingerDetail extends Vue {
     }
     // 选择歌曲
     select(song: any, index: number) {
-        this.selectSong({
-            list: this.songs,
-            index
-        });
+        this.selectSong({ song });
     }
 }
 </script>

@@ -212,10 +212,7 @@ export default class RankDetail extends Vue {
         songList.forEach((s: any, i: number) => {
             s.singer_name = this.songs[i].singerName;
         });
-        this.selectSong({
-            list: songList,
-            index
-        });
+        this.selectSong({ song: songList[index] });
     }
 }
 </script>
